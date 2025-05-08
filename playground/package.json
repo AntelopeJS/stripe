@@ -1,0 +1,29 @@
+{
+  "name": "playground",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ajs project run -w"
+  },
+  "dependencies": {
+    "stripe": "^14.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.7",
+    "prettier": "^2.6.1",
+    "typescript": "^5.8.3"
+  },
+  "antelopeJs": {
+    "imports": [
+      "core@beta",
+      "api@beta",
+      "stripe@beta"
+    ],
+    "baseUrl": "dist",
+    "paths": {
+      "@/*": [
+        "*"
+      ]
+    }
+  }
+} 
