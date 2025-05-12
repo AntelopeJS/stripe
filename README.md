@@ -8,13 +8,20 @@
 
 An extensive Stripe payment processing module that implements the Stripe interface for AntelopeJS.
 
-For detailed documentation on the Stripe interface, please refer to the [docs](https://github.com/AntelopeJS/interface-stripe).
-
 ## Installation
 
 ```bash
 ajs project modules add @antelopejs/stripe
 ```
+
+## Interfaces
+
+This module implements the Stripe interface that provides comprehensive payment processing capabilities. The interface is installed separately to maintain modularity and minimize dependencies.
+
+| Name          | Install command                         |            |
+| ------------- | --------------------------------------- | ---------- |
+| Stripe        | `ajs module imports add stripe`         | [Documentation](https://github.com/AntelopeJS/interface-stripe) |
+
 
 ## Overview
 
