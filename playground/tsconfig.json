@@ -22,6 +22,10 @@
     "baseUrl": "src",
     "paths": {
       "@ajs.local/*": ["../src/interfaces/*"],
+      "@ajs/stripe/*": ["../../.antelope/output/stripe/*"],
+      "@ajs/api/*": ["../../.antelope/interfaces.d/api/*"],
+      "@ajs/redis/*": ["../../.antelope/interfaces.d/redis/*"],
+      "@ajs/core/*": ["../../.antelope/interfaces.d/core/*"],
       "@ajs/*": ["../.antelope/interfaces.d/*"],
       "@/*": ["./*"]
     }
