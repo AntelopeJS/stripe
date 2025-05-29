@@ -1,7 +1,0 @@
-{
-  "config": {
-    "apiKey": "your_stripe_api_key",
-    "webhookSecret": "your_stripe_webhook_secret",
-    "endpoint": "stripe"
-  }
-}
