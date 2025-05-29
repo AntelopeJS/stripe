@@ -41,7 +41,12 @@
       "api@beta",
       "redis@beta"
     ],
-    "importsOptional": []
+    "importsOptional": [],
+    "defaultConfig": {
+      "apiKey": "your_stripe_api_key",
+      "webhookSecret": "your_stripe_webhook_secret",
+      "endpoint": "stripe"
+    }
   },
   "dependencies": {
     "redis": "^4.7.0",
