@@ -62,7 +62,8 @@ export declare function CompletePayment(paymentIntentId: string, source: Stripe.
  * @param {Stripe.PaymentIntent} intent - The payment intent object
  * @param {IntentChangeContext} context - The context of the intent change
  */
-type IntentWatcher = (id: any, intent: Stripe.PaymentIntent, context: IntentChangeContext) => void;
+type PaymentPayloadId = string | undefined;
+type IntentWatcher = (id: PaymentPayloadId, intent: Stripe.PaymentIntent, context: IntentChangeContext) => void;
 /**
  * Watch all payment intents for changes
  * @param {IntentWatcher} callback - Function to call when any payment intent changes
