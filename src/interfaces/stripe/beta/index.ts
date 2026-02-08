@@ -58,7 +58,7 @@ export async function InitializePayment(
  */
 interface WatchedIntent {
   resolve: (intent: Stripe.PaymentIntent) => void;
-  reject: (err: any) => void;
+  reject: (error: unknown) => void;
 }
 const watchedIntents = new Map<string, WatchedIntent>();
 const watchedIntentPromises = new Map<string, Promise<Stripe.PaymentIntent>>();
@@ -144,7 +144,8 @@ export async function CompletePayment(paymentIntentId: string, source: Stripe.So
  * @param {Stripe.PaymentIntent} intent - The payment intent object
  * @param {IntentChangeContext} context - The context of the intent change
  */
-type IntentWatcher = (id: any, intent: Stripe.PaymentIntent, context: IntentChangeContext) => void;
+type PaymentPayloadId = string | undefined;
+type IntentWatcher = (id: PaymentPayloadId, intent: Stripe.PaymentIntent, context: IntentChangeContext) => void;
 const watchersAll = new Map<IntentWatcher, boolean>();
 const watchersIntent = new Map<string, Set<IntentWatcher>>();
 internal.intentChanges.register((intent, context) => {
