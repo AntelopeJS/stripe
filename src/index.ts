@@ -2,8 +2,9 @@ import { Controller, HTTPResult, Parameter, Post, RawBody } from '@ajs/api/beta'
 import { internal as internalv1 } from '@ajs.local/stripe/beta';
 import Stripe from 'stripe';
 import { GetClient } from '@ajs/redis/beta';
-import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
+
+type RedisClient = Awaited<ReturnType<typeof GetClient>>;
 
 interface Config extends Stripe.StripeConfig {
   endpoint?: string;
@@ -21,8 +22,8 @@ const PROCESSED_MESSAGE_IDS_LIMIT = 1000;
 
 let client: Stripe;
 let stripeConfig: Config;
-let redisClient: Redis;
-let redisClientSubscriber: Redis | undefined;
+let redisClient: RedisClient;
+let redisClientSubscriber: RedisClient | undefined;
 const processedMessageIds = new Set<string>();
 
 export function construct(config: Config): void {
