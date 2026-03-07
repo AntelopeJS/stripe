@@ -1,5 +1,5 @@
-import Stripe from 'stripe';
-import { EventProxy } from '@ajs/core/beta';
+import { EventProxy } from "@ajs/core/beta";
+import type Stripe from "stripe";
 
 /**
  * Context information for payment intent change events
@@ -14,10 +14,17 @@ export interface IntentChangeContext {
 export namespace internal {
   export let client: Promise<Stripe>;
   export let SetClient: (client: Stripe) => void;
-  export const UnsetClient = () => (client = new Promise((resolve) => (SetClient = resolve)));
+  export const UnsetClient = () => {
+    client = new Promise((resolve) => {
+      SetClient = resolve;
+    });
+    return client;
+  };
   void UnsetClient();
 
-  export const intentChanges = new EventProxy<(intent: Stripe.PaymentIntent, context: IntentChangeContext) => void>();
+  export const intentChanges = new EventProxy<
+    (intent: Stripe.PaymentIntent, context: IntentChangeContext) => void
+  >();
 }
 
 /**
@@ -79,14 +86,15 @@ const watchedIntentPromises = new Map<string, Promise<Stripe.PaymentIntent>>();
 export async function WaitForPayment(paymentIntentId: string) {
   const client = await GetClient();
   const paymentIntent = await client.paymentIntents.retrieve(paymentIntentId);
-  if (paymentIntent.status === 'succeeded') {
+  if (paymentIntent.status === "succeeded") {
     return paymentIntent;
-  } else if (paymentIntent.status === 'canceled') {
+  } else if (paymentIntent.status === "canceled") {
     throw paymentIntent.cancellation_reason;
   }
 
-  if (watchedIntentPromises.has(paymentIntentId)) {
-    return await watchedIntentPromises.get(paymentIntentId)!;
+  const existingPromise = watchedIntentPromises.get(paymentIntentId);
+  if (existingPromise) {
+    return await existingPromise;
   }
   const promise = new Promise<Stripe.PaymentIntent>((resolve, reject) =>
     watchedIntents.set(paymentIntentId, { resolve, reject }),
@@ -109,9 +117,12 @@ export async function WaitForPayment(paymentIntentId: string) {
  *   console.error('Failed to complete payment:', error.message);
  * }
  */
-export async function CompletePayment(paymentIntentId: string, source: Stripe.Source) {
-  if (source.status !== 'chargeable') {
-    throw new Error('Source is not in chargeable state');
+export async function CompletePayment(
+  paymentIntentId: string,
+  source: Stripe.Source,
+) {
+  if (source.status !== "chargeable") {
+    throw new Error("Source is not in chargeable state");
   }
 
   const client = await GetClient();
@@ -145,7 +156,11 @@ export async function CompletePayment(paymentIntentId: string, source: Stripe.So
  * @param {IntentChangeContext} context - The context of the intent change
  */
 type PaymentPayloadId = string | undefined;
-type IntentWatcher = (id: PaymentPayloadId, intent: Stripe.PaymentIntent, context: IntentChangeContext) => void;
+type IntentWatcher = (
+  id: PaymentPayloadId,
+  intent: Stripe.PaymentIntent,
+  context: IntentChangeContext,
+) => void;
 const watchersAll = new Map<IntentWatcher, boolean>();
 const watchersIntent = new Map<string, Set<IntentWatcher>>();
 internal.intentChanges.register((intent, context) => {
@@ -154,15 +169,16 @@ internal.intentChanges.register((intent, context) => {
       watcher(intent.metadata.payload, intent, context);
     }
   }
-  if (watchersIntent.has(intent.id)) {
-    for (const watcher of watchersIntent.get(intent.id)!) {
+  const intentWatchers = watchersIntent.get(intent.id);
+  if (intentWatchers) {
+    for (const watcher of intentWatchers) {
       watcher(intent.metadata.payload, intent, context);
     }
   }
-  if (intent.status === 'succeeded' || intent.status === 'canceled') {
-    if (watchedIntents.has(intent.id)) {
-      const watch = watchedIntents.get(intent.id)!;
-      if (intent.status === 'succeeded') {
+  if (intent.status === "succeeded" || intent.status === "canceled") {
+    const watch = watchedIntents.get(intent.id);
+    if (watch) {
+      if (intent.status === "succeeded") {
         watch.resolve(intent);
       } else {
         watch.reject(intent.cancellation_reason);
@@ -209,5 +225,5 @@ export function WatchPayment(paymentIntentId: string, callback: IntentWatcher) {
   if (!watchersIntent.has(paymentIntentId)) {
     watchersIntent.set(paymentIntentId, new Set());
   }
-  watchersIntent.get(paymentIntentId)!.add(callback);
+  watchersIntent.get(paymentIntentId)?.add(callback);
 }
