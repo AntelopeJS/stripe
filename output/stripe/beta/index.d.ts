@@ -1,4 +1,4 @@
-import Stripe from 'stripe';
+import type Stripe from "stripe";
 /**
  * Context information for payment intent change events
  * @property {boolean} local - Indicates if the event was triggered locally or received from another cluster instance
