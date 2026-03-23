@@ -24,25 +24,17 @@
   "packageManager": "pnpm@10.6.5",
   "scripts": {
     "build": "rimraf dist && tsc",
-    "dev:prepare": "cd playground && ajs module imports install",
-    "dev": "ajs project run -w -p playground",
     "format": "biome format --write .",
-    "generate": "ajs module exports generate",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "prepack": "pnpm run build",
-    "prepare": "ajs module imports install",
     "release": "pnpm run lint && pnpm run test && pnpm run prepack && release-it",
     "test": "echo \"No test specified\""
   },
   "antelopeJs": {
-    "exportsPath": "dist/interfaces",
-    "imports": [
-      "core@beta",
-      "api@beta",
-      "redis@beta"
+    "implements": [
+      "@antelopejs/interface-stripe"
     ],
-    "importsOptional": [],
     "defaultConfig": {
       "apiKey": "your_stripe_api_key",
       "webhookSecret": "your_stripe_webhook_secret",
@@ -50,6 +42,9 @@
     }
   },
   "dependencies": {
+    "@antelopejs/interface-api": "^0.0.2",
+    "@antelopejs/interface-redis": "^0.0.2",
+    "@antelopejs/interface-stripe": "^0.0.2",
     "ioredis": "^5.10.0",
     "stripe": "^18.0.0",
     "uuid": "11.1.0"
@@ -58,7 +53,7 @@
     "@biomejs/biome": "2.3.2",
     "@types/node": "^22.14.1",
     "@types/uuid": "10.0.0",
-    "release-it": "^19.0.2",
+    "release-it": "^19.2.4",
     "release-it-changelogen": "^0.1.0",
     "rimraf": "^6.0.1",
     "typescript": "^5.8.3"

@@ -4,9 +4,9 @@ import {
   Parameter,
   Post,
   RawBody,
-} from "@ajs/api/beta";
-import { GetClient } from "@ajs/redis/beta";
-import { internal as internalv1 } from "@ajs.local/stripe/beta";
+} from "@antelopejs/interface-api";
+import { GetClient } from "@antelopejs/interface-redis";
+import { internal as internalv1 } from "@antelopejs/interface-stripe";
 import Stripe from "stripe";
 import { v4 as uuidv4 } from "uuid";
 

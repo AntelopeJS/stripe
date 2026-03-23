@@ -17,11 +17,7 @@
     "declaration": true,
     "sourceMap": true,
     "useDefineForClassFields": true,
-    "baseUrl": "src",
-    "paths": {
-      "@ajs.local/*": ["interfaces/*"],
-      "@ajs/*": ["interfaces/*"]
-    }
+    "baseUrl": "src"
   },
   "include": ["src/**/*.ts"]
 }
