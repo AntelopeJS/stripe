@@ -1,5 +1,33 @@
 # Changelog
 
+## v1.0.0
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v0.1.1...v1.0.0)
+
+### 💅 Refactors
+
+- Replace ioredis import with inferred RedisClient type ([2d05dee](https://github.com/AntelopeJS/stripe/commit/2d05dee))
+
+### 📦 Build
+
+- Replace rm -rf with rimraf ([#9](https://github.com/AntelopeJS/stripe/pull/9))
+
+### 🏡 Chore
+
+- Replicate ai agent config files (.agents/.claude) ([#10](https://github.com/AntelopeJS/stripe/pull/10))
+- Remove local skills/commands and simplify CI workflows ([6c0cfb0](https://github.com/AntelopeJS/stripe/commit/6c0cfb0))
+- Migrate from eslint/prettier to biome ([#11](https://github.com/AntelopeJS/stripe/pull/11))
+- Migrate from local beta interfaces to published @antelopejs packages ([e3929f7](https://github.com/AntelopeJS/stripe/commit/e3929f7))
+
+### 🤖 CI
+
+- Remove test:coverage step from CI workflow ([780b6be](https://github.com/AntelopeJS/stripe/commit/780b6be))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli <upd4ting@gmail.com>
+- Glastis ([@Glastis](http://github.com/Glastis))
+
 ## v0.1.1
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v0.1.0...v0.1.1)
