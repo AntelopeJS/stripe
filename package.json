@@ -42,9 +42,10 @@
     }
   },
   "dependencies": {
-    "@antelopejs/interface-api": "^0.0.2",
-    "@antelopejs/interface-redis": "^0.0.2",
-    "@antelopejs/interface-stripe": "^0.0.2",
+    "@antelopejs/interface-api": "^0.0.5",
+    "@antelopejs/interface-core": "^0.0.5",
+    "@antelopejs/interface-redis": "^0.0.6",
+    "@antelopejs/interface-stripe": "^0.0.4",
     "ioredis": "^5.10.1",
     "stripe": "^18.5.0",
     "uuid": "11.1.0"
