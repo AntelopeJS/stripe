@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.0.2
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v1.0.1...v1.0.2)
+
+### 🩹 Fixes
+
+- Support Core 1.5 interface contracts ([#13](https://github.com/AntelopeJS/stripe/pull/13))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli <upd4ting@gmail.com>
+
 ## v1.0.1
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v1.0.0...v1.0.1)
