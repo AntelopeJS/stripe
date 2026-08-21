@@ -29,7 +29,8 @@
     "lint:fix": "biome check --write .",
     "prepack": "pnpm run build",
     "release": "pnpm run lint && pnpm run test && pnpm run prepack && release-it",
-    "test": "echo \"No test specified\""
+    "test": "pnpm run build && node --test test/*.test.cjs",
+    "typecheck": "tsc --noEmit"
   },
   "antelopeJs": {
     "implements": [
@@ -42,10 +43,10 @@
     }
   },
   "dependencies": {
-    "@antelopejs/interface-api": "^0.0.5",
-    "@antelopejs/interface-core": "^0.0.5",
-    "@antelopejs/interface-redis": "^0.0.6",
-    "@antelopejs/interface-stripe": "^0.0.4",
+    "@antelopejs/interface-api": ">=0.0.5 <1.0.0",
+    "@antelopejs/interface-core": ">=0.0.5 <1.0.0",
+    "@antelopejs/interface-redis": ">=0.0.6 <1.0.0",
+    "@antelopejs/interface-stripe": ">=0.0.4 <1.0.0",
     "ioredis": "^5.10.1",
     "stripe": "^18.5.0",
     "uuid": "11.1.0"

@@ -9,17 +9,17 @@ importers:
   .:
     dependencies:
       '@antelopejs/interface-api':
-        specifier: ^0.0.5
-        version: 0.0.5(@antelopejs/interface-core@0.0.5)
+        specifier: '>=0.0.5 <1.0.0'
+        version: 0.0.12(@antelopejs/interface-core@0.0.11)
       '@antelopejs/interface-core':
-        specifier: ^0.0.5
-        version: 0.0.5
+        specifier: '>=0.0.5 <1.0.0'
+        version: 0.0.11
       '@antelopejs/interface-redis':
-        specifier: ^0.0.6
-        version: 0.0.6(@antelopejs/interface-core@0.0.5)
+        specifier: '>=0.0.6 <1.0.0'
+        version: 0.0.8(@antelopejs/interface-core@0.0.11)
       '@antelopejs/interface-stripe':
-        specifier: ^0.0.4
-        version: 0.0.4(@antelopejs/interface-core@0.0.5)(@types/node@22.19.15)
+        specifier: '>=0.0.4 <1.0.0'
+        version: 0.0.5(@antelopejs/interface-core@0.0.11)(@types/node@22.19.15)
       ioredis:
         specifier: ^5.10.1
         version: 5.10.1
@@ -54,21 +54,21 @@ importers:
 
 packages:
 
-  '@antelopejs/interface-api@0.0.5':
-    resolution: {integrity: sha512-BApviHE1vVkORDWtC8x8N2xCxBdFZZnhgMlxDuUmlXz2fGlYqBX1inIQQrEyOY31Zc/WN7nJpcA0zjjwk7Sp9A==}
+  '@antelopejs/interface-api@0.0.12':
+    resolution: {integrity: sha512-28cZoGZ/BxO7jhbrZ/ueOK26+9cRPCA0jKpeJv155G8/RtqFVFcqG7SsVunuIubDT/ukRrb2JUFrnT0uvJV2mw==}
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
 
-  '@antelopejs/interface-core@0.0.5':
-    resolution: {integrity: sha512-4H6hpFfiK2+DE8vL2mEtPbq1WNch9lt40QNr9KjBrOAtnuq/zMfIlzhbEsda39m+FVkMWXfUYoVolRogVKCLIQ==}
+  '@antelopejs/interface-core@0.0.11':
+    resolution: {integrity: sha512-eKE3F9XY0eIzdLBXms8QAY4BHmA8+XXZnta0vZ411q9GiSbI2S1Q3lfYzmnXU4ZK9i+/SIYPplOsA02gIdxODg==}
 
-  '@antelopejs/interface-redis@0.0.6':
-    resolution: {integrity: sha512-c9at7pIFO2UbFlL4EFJht8Wt8uir33oj1Ja1rxMgPLPO8x8bOk4s9//Bqaigrjc0ELj/5zZQkqx3fHdmNru5QQ==}
+  '@antelopejs/interface-redis@0.0.8':
+    resolution: {integrity: sha512-f7pAEpZG50mw12opT80DPL0wLtFmIfuhPJHDuRHDD3kg7PeAqiMWb1AQH3nwRn/+lxtB5/2zdLGWrzZ8y4xRdw==}
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
 
-  '@antelopejs/interface-stripe@0.0.4':
-    resolution: {integrity: sha512-EVdVX+AgBvUCg7wlK/Y4lJ87v98Z/+CS2OJmbCiq65Sw9GMzszRs1LXpLXgKsHPHROqNk58QIOk8bMPdcXS85g==}
+  '@antelopejs/interface-stripe@0.0.5':
+    resolution: {integrity: sha512-DvKQgsdiE0bi3FroAG2L/5Vs6gk6DS5Z7t4FDqNVKJa7OCPmSxGNIpiZGttcLf8WjGwc8KsIPA1mYKWPZytMMA==}
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
 
@@ -1255,24 +1255,24 @@ packages:
 
 snapshots:
 
-  '@antelopejs/interface-api@0.0.5(@antelopejs/interface-core@0.0.5)':
+  '@antelopejs/interface-api@0.0.12(@antelopejs/interface-core@0.0.11)':
     dependencies:
-      '@antelopejs/interface-core': 0.0.5
+      '@antelopejs/interface-core': 0.0.11
 
-  '@antelopejs/interface-core@0.0.5':
+  '@antelopejs/interface-core@0.0.11':
     dependencies:
       reflect-metadata: 0.2.2
 
-  '@antelopejs/interface-redis@0.0.6(@antelopejs/interface-core@0.0.5)':
+  '@antelopejs/interface-redis@0.0.8(@antelopejs/interface-core@0.0.11)':
     dependencies:
-      '@antelopejs/interface-core': 0.0.5
+      '@antelopejs/interface-core': 0.0.11
       ioredis: 5.10.1
     transitivePeerDependencies:
       - supports-color
 
-  '@antelopejs/interface-stripe@0.0.4(@antelopejs/interface-core@0.0.5)(@types/node@22.19.15)':
+  '@antelopejs/interface-stripe@0.0.5(@antelopejs/interface-core@0.0.11)(@types/node@22.19.15)':
     dependencies:
-      '@antelopejs/interface-core': 0.0.5
+      '@antelopejs/interface-core': 0.0.11
       stripe: 18.5.0(@types/node@22.19.15)
     transitivePeerDependencies:
       - '@types/node'
