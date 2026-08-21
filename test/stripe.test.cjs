@@ -136,7 +136,7 @@ async function teardownModule() {
   assert.equal(state.redis.subscriber.listenerCount("message"), 0);
   const clientState = await Promise.race([
     stripeInterface.GetClient().then(() => "resolved"),
-    Promise.resolve("pending"),
+    new Promise((resolve) => setImmediate(() => resolve("pending"))),
   ]);
   assert.equal(clientState, "pending");
 }
