@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { PaymentError } from "@antelopejs/interface-payment";
 
 export interface Account {
   client: Stripe;
@@ -29,7 +30,7 @@ export function ClearAccounts(): void {
 export function GetAccount(provider?: string): Account {
   const account = accounts.get(provider ?? DEFAULT_ACCOUNT);
   if (!account) {
-    throw new Error(
+    throw new PaymentError(
       provider
         ? `No Stripe account configured under "${provider}"`
         : "The Stripe module has no default account configured",

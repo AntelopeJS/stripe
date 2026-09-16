@@ -11,6 +11,8 @@ import {
 const RESOURCE_MISSING = "resource_missing";
 
 const STATE_CODES = new Set([
+  "amount_too_large",
+  "amount_too_small",
   "payment_intent_unexpected_state",
   "charge_already_captured",
   "charge_already_refunded",
@@ -40,11 +42,26 @@ function notFound(id: string, entity: string, code?: string): PaymentError {
   return new PaymentNotFoundError(id, entity as PaymentEntity, code);
 }
 
-function isState(error: Stripe.errors.StripeError, context: ErrorContext) {
+const INVALID_REQUEST = "invalid_request_error";
+
+/**
+ * An uncoded rejection only counts as a state problem when Stripe classed it as
+ * an invalid request. Authentication failures, API errors and connection
+ * failures also carry no code, and reporting one of those as "this payment
+ * cannot be refunded" turns a retryable outage into a permanent refusal.
+ */
+function isState(
+  error: Stripe.errors.StripeError,
+  context: ErrorContext,
+): boolean {
   if (error.code && STATE_CODES.has(error.code)) {
     return true;
   }
-  return Boolean(context.uncodedIsState) && !error.code;
+  return (
+    Boolean(context.uncodedIsState) &&
+    !error.code &&
+    error.rawType === INVALID_REQUEST
+  );
 }
 
 /**
@@ -58,7 +75,7 @@ function isState(error: Stripe.errors.StripeError, context: ErrorContext) {
  * @param id - The identifier the call was made against, for the message
  * @param context - What a missing resource and an uncoded rejection mean here
  */
-function TranslateError(
+export function TranslateError(
   error: unknown,
   id: string,
   context: ErrorContext,

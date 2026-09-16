@@ -1,19 +1,12 @@
 import Stripe from "stripe";
 import { v4 as uuidv4 } from "uuid";
-import { GetClient } from "@antelopejs/interface-redis";
+import type { GetClient } from "@antelopejs/interface-redis";
 import { internal as internalv1 } from "@antelopejs/interface-stripe";
 import { internal as paymentInternal } from "@antelopejs/interface-payment";
 import {
   GetInterfaceInstances,
   ImplementInterface,
 } from "@antelopejs/interface-core";
-import {
-  Controller,
-  HTTPResult,
-  Parameter,
-  Post,
-  RawBody,
-} from "@antelopejs/interface-api";
 
 import {
   ClearAccounts,
@@ -21,6 +14,8 @@ import {
 } from "./implementations/payment/accounts";
 
 type RedisClient = Awaited<ReturnType<typeof GetClient>>;
+type RedisModule = typeof import("@antelopejs/interface-redis");
+type ApiModule = typeof import("@antelopejs/interface-api");
 
 interface AccountConfig {
   apiKey: string;
@@ -86,14 +81,15 @@ export async function construct(config: Config): Promise<void> {
     await import("./implementations/payment"),
   );
 
-  if (hasInterface(API_INTERFACE)) {
-    makeStripeController(stripeConfig.endpoint || "stripe");
+  if (!hasInterface(API_INTERFACE)) {
+    process.stderr.write(
+      `No module implements ${API_INTERFACE}; the built-in Stripe webhook endpoint is not mounted. ` +
+        "Consumers of @antelopejs/interface-payment should call VerifyWebhook from their own route.\n",
+    );
     return;
   }
-  process.stderr.write(
-    `No module implements ${API_INTERFACE}; the built-in Stripe webhook endpoint is not mounted. ` +
-      "Consumers of @antelopejs/interface-payment should call VerifyWebhook from their own route.\n",
-  );
+  const api: ApiModule = await import("@antelopejs/interface-api");
+  makeStripeController(api, stripeConfig.endpoint || "stripe");
 }
 
 export function destroy(): void {
@@ -118,7 +114,8 @@ export async function start(): Promise<void> {
     return;
   }
 
-  redisClient = await GetClient();
+  const redis: RedisModule = await import("@antelopejs/interface-redis");
+  redisClient = await redis.GetClient();
 
   redisClientSubscriber = redisClient.duplicate();
   redisClientSubscriber.on("message", handlePaymentIntentChangesMessage);
@@ -162,7 +159,8 @@ function reportRedisMessageProcessingError(error: unknown): void {
   );
 }
 
-const makeStripeController = (path: string) => {
+const makeStripeController = (api: ApiModule, path: string) => {
+  const { Controller, HTTPResult, Parameter, Post, RawBody } = api;
   abstract class StripeController extends Controller(path) {
     @Post()
     async webhook(

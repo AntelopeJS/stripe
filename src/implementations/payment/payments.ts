@@ -6,9 +6,9 @@ import type {
   PaymentRequest,
 } from "@antelopejs/interface-payment";
 
-import { Translating } from "./errors";
 import { GetAccount } from "./accounts";
 import { ToPayment, WriteMetadata } from "./mapping";
+import { TranslateError, Translating } from "./errors";
 
 const PAYMENT_ENTITY = { entity: "payment" as const };
 const EXPAND_CHARGE = ["latest_charge"];
@@ -23,6 +23,9 @@ function assertConsistent(request: PaymentRequest): void {
     throw new PaymentError(
       "An off-session payment needs a saved paymentMethod to charge",
     );
+  }
+  if (request.savePaymentMethod && !request.customer) {
+    throw new PaymentError("savePaymentMethod requires a customer");
   }
 }
 
@@ -83,7 +86,7 @@ export async function createPayment(
     if (declined) {
       return declined;
     }
-    throw error;
+    throw TranslateError(error, request.paymentMethod ?? "", PAYMENT_ENTITY);
   }
 }
 

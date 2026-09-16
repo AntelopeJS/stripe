@@ -1,4 +1,9 @@
-import type { Refund, RefundRequest } from "@antelopejs/interface-payment";
+import type Stripe from "stripe";
+import type {
+  Refund,
+  RefundReason,
+  RefundRequest,
+} from "@antelopejs/interface-payment";
 
 import { Translating } from "./errors";
 import { GetAccount } from "./accounts";
@@ -14,6 +19,30 @@ const REFUND_ENTITY = {
   uncodedIsState: true,
 };
 
+/** Stripe accepts three reasons; the contract has a fourth. */
+const STRIPE_REASONS: Record<string, Stripe.RefundCreateParams.Reason> = {
+  duplicate: "duplicate",
+  fraudulent: "fraudulent",
+  requested_by_customer: "requested_by_customer",
+};
+
+/** The reason metadata key, for a reason Stripe has no field for. */
+const REASON_KEY = "antelope_refund_reason";
+
+function toReason(reason: RefundReason | undefined): Stripe.RefundCreateParams {
+  if (!reason) {
+    return {};
+  }
+  const native = STRIPE_REASONS[reason];
+  return native ? { reason: native } : {};
+}
+
+function reasonMetadata(
+  reason: RefundReason | undefined,
+): Record<string, string> {
+  return reason && !STRIPE_REASONS[reason] ? { [REASON_KEY]: reason } : {};
+}
+
 export async function refundPayment(
   request: RefundRequest,
   idempotencyKey: string,
@@ -25,13 +54,12 @@ export async function refundPayment(
       await client.refunds.create(
         {
           payment_intent: request.payment,
-          metadata: WriteMetadata("", request.metadata),
+          metadata: WriteMetadata("", {
+            ...request.metadata,
+            ...reasonMetadata(request.reason),
+          }),
           ...(request.amount ? { amount: request.amount.value } : {}),
-          ...(request.reason === "duplicate" ||
-          request.reason === "fraudulent" ||
-          request.reason === "requested_by_customer"
-            ? { reason: request.reason }
-            : {}),
+          ...toReason(request.reason),
         },
         { idempotencyKey },
       ),

@@ -47,27 +47,50 @@ function readSignature(headers: WebhookRequest["headers"]): string {
  * where an event's fields may come from; a provider established by re-fetching
  * instead would have to read every field back from the record.
  */
-function buildEvent(event: Stripe.Event): PaymentEvent | undefined {
+/**
+ * A webhook body carries `latest_charge` as a bare id, and the refunded total
+ * lives on the charge. Left alone, a `payment_intent.succeeded` for an intent
+ * that already has refunds would report `amountRefunded` as zero — a wrong
+ * value, not an unknown one. One read settles it.
+ */
+async function withRefundedTotal(
+  client: Stripe,
+  intent: Stripe.PaymentIntent,
+): Promise<Stripe.PaymentIntent> {
+  if (typeof intent.latest_charge !== "string") {
+    return intent;
+  }
+  const charge = await client.charges
+    .retrieve(intent.latest_charge)
+    .catch(() => undefined);
+  return charge ? { ...intent, latest_charge: charge } : intent;
+}
+
+async function buildEvent(
+  client: Stripe,
+  event: Stripe.Event,
+): Promise<PaymentEvent | undefined> {
   const base = { id: event.id, createdAt: ToEpochMillis(event.created) };
 
   const paymentType = PAYMENT_EVENTS[event.type];
   if (paymentType) {
-    const intent = event.data.object as Stripe.PaymentIntent;
+    const intent = await withRefundedTotal(
+      client,
+      event.data.object as Stripe.PaymentIntent,
+    );
     return { ...base, type: paymentType, payment: ToPayment(intent) };
   }
 
-  const refundType = REFUND_EVENTS[event.type];
-  if (refundType) {
-    const refund = event.data.object as Stripe.Refund;
-    const settled = refund.status === "succeeded" || refund.status === "failed";
-    if (!settled) {
+  if (REFUND_EVENTS[event.type]) {
+    const refund = ToRefund(event.data.object as Stripe.Refund);
+    if (refund.status === "pending") {
       return undefined;
     }
     return {
       ...base,
       type:
         refund.status === "succeeded" ? "refund.succeeded" : "refund.failed",
-      refund: ToRefund(refund),
+      refund,
     };
   }
 
@@ -96,5 +119,5 @@ export async function verifyWebhook(
         error instanceof Error ? error.message : "The signature did not verify",
       );
     });
-  return buildEvent(event);
+  return buildEvent(client, event);
 }

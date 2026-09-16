@@ -11,12 +11,13 @@ import { GetAccount } from "./accounts";
 import { ToEpochMillis, ToPaymentStatus, WriteMetadata } from "./mapping";
 
 const SESSION_ENTITY = { entity: "checkout session" as const };
+const OPEN = "open";
 const EXPAND_INTENT = ["payment_intent"];
 
 const STATUS_BY_SESSION_STATUS: Record<string, PaymentStatus> = {
   complete: "succeeded",
   expired: "canceled",
-  open: "pending",
+  [OPEN]: "pending",
 };
 
 function lineItem(
@@ -33,9 +34,12 @@ function lineItem(
 }
 
 /**
- * The session's own status is the fallback. Once Stripe has created the intent
- * behind it, that intent is the better answer: it distinguishes `authorized`
- * and `failed`, which the session status cannot.
+ * While the session is open the payer can still retry, so the session's own
+ * status wins: a first card that declined leaves the intent at
+ * `requires_payment_method` with an error recorded, which reads as the terminal
+ * `failed` and would have a backend abandon an order the payer is still paying.
+ * Once the session is no longer open, the intent is the better answer — it
+ * distinguishes `authorized` and `failed`, which the session status cannot.
  */
 function toSession(session: Stripe.Checkout.Session): CheckoutSession {
   const intent =
@@ -49,9 +53,10 @@ function toSession(session: Stripe.Checkout.Session): CheckoutSession {
   return {
     id: session.id,
     redirectUrl: session.url ?? "",
-    status: intent
-      ? ToPaymentStatus(intent)
-      : (STATUS_BY_SESSION_STATUS[session.status ?? "open"] ?? "pending"),
+    status:
+      intent && session.status !== OPEN
+        ? ToPaymentStatus(intent)
+        : (STATUS_BY_SESSION_STATUS[session.status ?? OPEN] ?? "pending"),
     ...(paymentId ? { payment: paymentId } : {}),
     ...(session.expires_at
       ? { expiresAt: ToEpochMillis(session.expires_at) }

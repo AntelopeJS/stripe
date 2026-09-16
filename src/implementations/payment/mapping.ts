@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { PaymentError } from "@antelopejs/interface-payment";
 import type {
   Amount,
   CardDetails,
@@ -129,8 +130,22 @@ function ToFailure(
   };
 }
 
-function redirectUrl(intent: Stripe.PaymentIntent): string | undefined {
-  return intent.next_action?.redirect_to_url?.url ?? undefined;
+/**
+ * The contract requires `redirectUrl` exactly when the status is
+ * `requires_action`. Stripe supplies one for every next_action this module can
+ * produce, because it always confirms server-side with a return_url; the
+ * URL-less `use_stripe_sdk` action only arises from client-side confirmation.
+ * If one ever reaches here the contract cannot be honoured, so say so rather
+ * than return a payment that quietly breaks the invariant callers branch on.
+ */
+function redirectUrl(intent: Stripe.PaymentIntent): string {
+  const url = intent.next_action?.redirect_to_url?.url;
+  if (!url) {
+    throw new PaymentError(
+      `Payment ${intent.id} needs payer action of type "${intent.next_action?.type ?? "unknown"}", which has no redirect URL and cannot be expressed through this interface`,
+    );
+  }
+  return url;
 }
 
 function refundedTotal(intent: Stripe.PaymentIntent): number {
@@ -144,7 +159,6 @@ function refundedTotal(intent: Stripe.PaymentIntent): number {
 export function ToPayment(intent: Stripe.PaymentIntent): Payment {
   const status = ToPaymentStatus(intent);
   const { reference, metadata } = ReadMetadata(intent.metadata);
-  const url = redirectUrl(intent);
   return {
     id: intent.id,
     amount: ToMinorUnits(intent.amount, intent.currency),
@@ -159,7 +173,9 @@ export function ToPayment(intent: Stripe.PaymentIntent): Payment {
     ...(typeof intent.payment_method === "string"
       ? { paymentMethod: intent.payment_method }
       : {}),
-    ...(status === "requires_action" && url ? { redirectUrl: url } : {}),
+    ...(status === "requires_action"
+      ? { redirectUrl: redirectUrl(intent) }
+      : {}),
     ...(status === "failed"
       ? { failure: ToFailure(intent.last_payment_error ?? undefined) }
       : {}),

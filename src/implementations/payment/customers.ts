@@ -11,7 +11,7 @@ import { ToPaymentMethod } from "./mapping";
 
 const CUSTOMER_ENTITY = { entity: "customer" as const };
 const METHOD_ENTITY = { entity: "payment method" as const };
-const LISTED_METHOD_TYPES = ["card", "sepa_debit", "paypal", "link"] as const;
+const METHOD_PAGE_SIZE = 100;
 
 function toCustomer(customer: import("stripe").Stripe.Customer): Customer {
   return {
@@ -80,15 +80,14 @@ export async function listPaymentMethods(
 ): Promise<PaymentMethod[]> {
   const { client } = GetAccount(provider);
   return Translating(customer, CUSTOMER_ENTITY, async () => {
-    const pages = await Promise.all(
-      LISTED_METHOD_TYPES.map((type) =>
-        client.paymentMethods.list({ customer, type }),
-      ),
-    );
-    return pages
-      .flatMap((page) => page.data)
-      .sort((first, second) => second.created - first.created)
-      .map(ToPaymentMethod);
+    const methods: PaymentMethod[] = [];
+    for await (const method of client.paymentMethods.list({
+      customer,
+      limit: METHOD_PAGE_SIZE,
+    })) {
+      methods.push(ToPaymentMethod(method));
+    }
+    return methods.sort((first, second) => second.createdAt - first.createdAt);
   });
 }
 
