@@ -24,7 +24,7 @@ function toCustomer(customer: import("stripe").Stripe.Customer): Customer {
   };
 }
 
-export async function createCustomer(
+export async function CreateCustomer(
   request: CustomerRequest,
   idempotencyKey: string,
   provider?: string,
@@ -49,7 +49,7 @@ export async function createCustomer(
  * meaningful field is `deleted: true`. The contract says a deleted customer is
  * gone, so that shape is reported as missing.
  */
-export async function getCustomer(
+export async function GetCustomer(
   id: string,
   provider?: string,
 ): Promise<Customer> {
@@ -63,7 +63,7 @@ export async function getCustomer(
   });
 }
 
-export async function deleteCustomer(
+export async function DeleteCustomer(
   id: string,
   idempotencyKey: string,
   provider?: string,
@@ -74,7 +74,7 @@ export async function deleteCustomer(
   );
 }
 
-export async function listPaymentMethods(
+export async function ListPaymentMethods(
   customer: string,
   provider?: string,
 ): Promise<PaymentMethod[]> {
@@ -91,7 +91,7 @@ export async function listPaymentMethods(
   });
 }
 
-export async function detachPaymentMethod(
+export async function DetachPaymentMethod(
   id: string,
   idempotencyKey: string,
   provider?: string,

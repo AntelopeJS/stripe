@@ -43,7 +43,7 @@ function reasonMetadata(
   return reason && !STRIPE_REASONS[reason] ? { [REASON_KEY]: reason } : {};
 }
 
-export async function refundPayment(
+export async function RefundPayment(
   request: RefundRequest,
   idempotencyKey: string,
   provider?: string,
@@ -67,7 +67,7 @@ export async function refundPayment(
   );
 }
 
-export async function getRefund(
+export async function GetRefund(
   id: string,
   provider?: string,
 ): Promise<Refund> {

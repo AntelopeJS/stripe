@@ -69,7 +69,7 @@ function declinedPayment(error: unknown): Payment | undefined {
   return intent ? ToPayment(intent) : undefined;
 }
 
-export async function createPayment(
+export async function CreatePayment(
   request: PaymentRequest,
   idempotencyKey: string,
   provider?: string,
@@ -90,7 +90,7 @@ export async function createPayment(
   }
 }
 
-export async function getPayment(
+export async function GetPayment(
   id: string,
   provider?: string,
 ): Promise<Payment> {
@@ -102,7 +102,7 @@ export async function getPayment(
   );
 }
 
-export async function capturePayment(
+export async function CapturePayment(
   id: string,
   idempotencyKey: string,
   amount?: Amount,
@@ -121,7 +121,7 @@ export async function capturePayment(
   });
 }
 
-export async function cancelPayment(
+export async function CancelPayment(
   id: string,
   idempotencyKey: string,
   provider?: string,

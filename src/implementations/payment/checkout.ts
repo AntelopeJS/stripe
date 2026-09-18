@@ -64,7 +64,7 @@ function toSession(session: Stripe.Checkout.Session): CheckoutSession {
   };
 }
 
-export async function createCheckoutSession(
+export async function CreateCheckoutSession(
   request: CheckoutSessionRequest,
   idempotencyKey: string,
   provider?: string,
@@ -105,7 +105,7 @@ export async function createCheckoutSession(
   );
 }
 
-export async function getCheckoutSession(
+export async function GetCheckoutSession(
   id: string,
   provider?: string,
 ): Promise<CheckoutSession> {

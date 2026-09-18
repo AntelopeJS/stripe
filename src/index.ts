@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 import { v4 as uuidv4 } from "uuid";
+import * as payment from "@antelopejs/interface-payment";
 import type { GetClient } from "@antelopejs/interface-redis";
 import { internal as internalv1 } from "@antelopejs/interface-stripe";
-import { internal as paymentInternal } from "@antelopejs/interface-payment";
 import {
   GetInterfaceInstances,
   ImplementInterface,
@@ -76,10 +76,7 @@ export async function construct(config: Config): Promise<void> {
   client = new Stripe(stripeConfig.apiKey, options);
   registerAccounts(config, options);
 
-  await ImplementInterface(
-    paymentInternal,
-    await import("./implementations/payment"),
-  );
+  await ImplementInterface(payment, await import("./implementations/payment"));
 
   if (!hasInterface(API_INTERFACE)) {
     process.stderr.write(

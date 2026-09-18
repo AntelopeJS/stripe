@@ -106,7 +106,7 @@ async function buildEvent(
   return undefined;
 }
 
-export async function verifyWebhook(
+export async function VerifyWebhook(
   request: WebhookRequest,
   provider?: string,
 ): Promise<PaymentEvent | undefined> {
