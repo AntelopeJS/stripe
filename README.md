@@ -1,5 +1,3 @@
-![Stripe](.github/social-card.png)
-
 # @antelopejs/stripe
 
 <div align="center">
