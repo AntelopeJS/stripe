@@ -8,9 +8,7 @@ export async function MarkSubscriptionCharge(
   client: Stripe,
   payment: Payment,
 ): Promise<Payment> {
-  const subscription = await SubscriptionOfPayment(client, payment.id).catch(
-    () => undefined,
-  );
+  const subscription = await SubscriptionOfPayment(client, payment.id);
   if (!subscription) return payment;
   return {
     ...payment,

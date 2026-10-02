@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
-import { GetPayment } from "@antelopejs/interface-payment";
+import { GetPayment, VerifyWebhook } from "@antelopejs/interface-payment";
 import {
   CancelSubscription,
   CreateSubscription,
@@ -10,6 +10,8 @@ import {
   ListSubscriptions,
   SUBSCRIPTION_METADATA_KEY,
   type Subscription,
+  type SubscriptionEvent,
+  SubscriptionEvents,
   SubscriptionPaymentError,
   UpdateSubscriptionPaymentMethod,
 } from "@antelopejs/interface-subscriptions";
@@ -28,6 +30,7 @@ const AMOUNT = { value: 1900, currency: "EUR" };
 const REFUSED_STATUSES: readonly string[] = ["failed", "canceled"];
 
 const client = new Stripe(process.env.STRIPE_KEY ?? "");
+const signer = new Stripe("sk_test_unused_for_signing_only");
 const clocks: string[] = [];
 
 interface ClockPayer {
@@ -92,6 +95,36 @@ function pastPeriodEnd(subscription: Subscription): number {
   return subscription.currentPeriodEnd / SECOND_MS + AFTER_RENEWAL_S;
 }
 
+async function deliverAndCollect(
+  type: string,
+  object: unknown,
+): Promise<SubscriptionEvent[]> {
+  const collected: SubscriptionEvent[] = [];
+  const handler = `stripe-clock-${randomUUID()}`;
+  SubscriptionEvents.register(handler, (event) => void collected.push(event));
+  try {
+    const payload = JSON.stringify({
+      id: `evt_${randomUUID().replace(/-/g, "")}`,
+      object: "event",
+      created: Math.floor(Date.now() / SECOND_MS),
+      type,
+      data: { object },
+    });
+    await VerifyWebhook({
+      body: Buffer.from(payload),
+      headers: {
+        "stripe-signature": signer.webhooks.generateTestHeaderString({
+          payload,
+          secret: process.env.STRIPE_TEST_WEBHOOK_SECRET ?? "",
+        }),
+      },
+    });
+  } finally {
+    SubscriptionEvents.unregister(handler);
+  }
+  return collected;
+}
+
 after(async () => {
   await Promise.all(
     clocks.map((clock) =>
@@ -143,6 +176,16 @@ describe("[stripe] subscriptions on a test clock", function () {
 
     assert.equal(failed.status, "past_due");
     assert.equal(failed.currentPeriodStart, created.currentPeriodEnd);
+
+    const invoice = await client.invoices.retrieve(
+      (await client.subscriptions.retrieve(created.id))
+        .latest_invoice as string,
+    );
+    const [event] = await deliverAndCollect("invoice.payment_failed", invoice);
+    assert.equal(event?.type, "subscription.payment_failed");
+    assert.equal(event?.subscription.id, created.id);
+    assert.equal(event?.subscription.status, "past_due");
+    assert.equal(event?.payment, failed.latestPayment);
   });
 
   it("ends at the period end when cancelled for then, without charging", async () => {

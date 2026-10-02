@@ -12,11 +12,12 @@ import {
   ValidateSubscriptionRequest,
 } from "@antelopejs/interface-subscriptions";
 
-import { ToSubscription } from "./mapping";
 import { SubscriptionProduct } from "./product";
 import { GetAccount } from "../payment/accounts";
+import { IsOwnSubscription, ToSubscription } from "./mapping";
 import { ToPayment, WriteMetadata } from "../payment/mapping";
 import {
+  IsAnyMissing,
   IsMissing,
   TranslateSubscriptionError,
   TranslatingSubscription,
@@ -124,18 +125,24 @@ export async function CreateSubscription(
   }
 }
 
+async function ownSubscription(
+  client: Stripe,
+  id: string,
+): Promise<Stripe.Subscription> {
+  const subscription = await TranslatingSubscription(id, () =>
+    client.subscriptions.retrieve(id, { expand: EXPAND_LATEST_PAYMENT }),
+  );
+  if (!IsOwnSubscription(subscription.metadata)) {
+    throw new SubscriptionNotFoundError(id);
+  }
+  return subscription;
+}
+
 export async function GetSubscription(
   id: string,
   provider?: string,
 ): Promise<Subscription> {
-  const client = clientFor(provider);
-  return TranslatingSubscription(id, async () =>
-    ToSubscription(
-      await client.subscriptions.retrieve(id, {
-        expand: EXPAND_LATEST_PAYMENT,
-      }),
-    ),
-  );
+  return ToSubscription(await ownSubscription(clientFor(provider), id));
 }
 
 export async function ListSubscriptions(
@@ -147,9 +154,11 @@ export async function ListSubscriptions(
     const listed = await client.subscriptions
       .list({ customer, status: "all", expand: EXPAND_LISTED })
       .autoPagingToArray({ limit: LIST_LIMIT });
-    return listed.map((subscription) => ToSubscription(subscription));
+    return listed
+      .filter((subscription) => IsOwnSubscription(subscription.metadata))
+      .map((subscription) => ToSubscription(subscription));
   } catch (error) {
-    if (IsMissing(error)) return [];
+    if (IsAnyMissing(error)) return [];
     throw TranslateSubscriptionError(error, customer);
   }
 }
@@ -216,6 +225,7 @@ export async function CancelSubscription(
     );
   }
   const client = clientFor(provider);
+  await ownSubscription(client, id);
   try {
     return ToSubscription(await cancel(client, id, idempotencyKey));
   } catch (error) {
@@ -233,6 +243,7 @@ export async function UpdateSubscriptionPaymentMethod(
   provider?: string,
 ): Promise<Subscription> {
   const client = clientFor(provider);
+  await ownSubscription(client, id);
   return TranslatingSubscription(id, async () =>
     ToSubscription(
       await client.subscriptions.update(

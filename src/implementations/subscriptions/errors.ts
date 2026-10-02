@@ -12,9 +12,17 @@ const INVALID_REQUEST = "invalid_request_error";
 
 type Translation = (error: Stripe.errors.StripeError, id: string) => Error;
 
+const REQUEST_PARAMS = new Set(["customer", "default_payment_method"]);
+
+function missing(error: Stripe.errors.StripeError, id: string): Error {
+  if (error.param && REQUEST_PARAMS.has(error.param)) {
+    return new InvalidSubscriptionRequestError(error.message, error.code);
+  }
+  return new SubscriptionNotFoundError(id, error.code);
+}
+
 const BY_CODE: Record<string, Translation> = {
-  [RESOURCE_MISSING]: (error, id) =>
-    new SubscriptionNotFoundError(id, error.code),
+  [RESOURCE_MISSING]: missing,
   [CANCELED_FIELDS]: (error) =>
     new InvalidSubscriptionStateError(error.message, "canceled", error.code),
 };
@@ -38,7 +46,8 @@ export function TranslateSubscriptionError(
 export function IsMissing(error: unknown): boolean {
   return (
     error instanceof Stripe.errors.StripeError &&
-    error.code === RESOURCE_MISSING
+    error.code === RESOURCE_MISSING &&
+    !REQUEST_PARAMS.has(error.param ?? "")
   );
 }
 
@@ -51,4 +60,11 @@ export async function TranslatingSubscription<T>(
   } catch (error) {
     throw TranslateSubscriptionError(error, id);
   }
+}
+
+export function IsAnyMissing(error: unknown): boolean {
+  return (
+    error instanceof Stripe.errors.StripeError &&
+    error.code === RESOURCE_MISSING
+  );
 }

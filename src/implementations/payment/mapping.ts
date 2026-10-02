@@ -15,7 +15,7 @@ import type {
 } from "@antelopejs/interface-payment";
 
 /** Metadata key the caller's own reference is round-tripped through. */
-const REFERENCE_KEY = "antelope_reference";
+export const REFERENCE_KEY = "antelope_reference";
 
 const MILLIS_PER_SECOND = 1000;
 

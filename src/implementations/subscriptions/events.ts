@@ -5,9 +5,9 @@ import type {
   SubscriptionEventType,
 } from "@antelopejs/interface-subscriptions";
 
-import { ToSubscription } from "./mapping";
 import { ToEpochMillis } from "../payment/mapping";
 import { EXPAND_LATEST_PAYMENT } from "./subscriptions";
+import { IsOwnSubscription, ToSubscription } from "./mapping";
 
 const handlers = new Map<string, SubscriptionEventHandler>();
 const NO_CHARGE = 0;
@@ -53,6 +53,7 @@ async function PaymentOfInvoice(
 function fromSubscription(type: SubscriptionEventType): Builder {
   return async (client, event) => {
     const subscription = event.data.object as Stripe.Subscription;
+    if (!IsOwnSubscription(subscription.metadata)) return undefined;
     const payment = await PaymentOfInvoice(client, subscription.latest_invoice);
     return {
       id: event.id,
@@ -64,8 +65,9 @@ function fromSubscription(type: SubscriptionEventType): Builder {
 }
 
 function subscriptionOf(invoice: Stripe.Invoice): string | undefined {
-  const parent = invoice.parent?.subscription_details?.subscription;
-  return parent ? idOf(parent) : undefined;
+  const details = invoice.parent?.subscription_details;
+  if (!details || !IsOwnSubscription(details.metadata)) return undefined;
+  return idOf(details.subscription);
 }
 
 function fromInvoice(type: SubscriptionEventType): Builder {

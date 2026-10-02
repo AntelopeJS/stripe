@@ -5,7 +5,7 @@ import type {
   SubscriptionStatus,
 } from "@antelopejs/interface-subscriptions";
 
-import { ReadMetadata, ToEpochMillis } from "../payment/mapping";
+import { REFERENCE_KEY, ReadMetadata, ToEpochMillis } from "../payment/mapping";
 
 const STATUS_BY_STRIPE: Record<Stripe.Subscription.Status, SubscriptionStatus> =
   {
@@ -99,4 +99,10 @@ export function ToSubscription(
   if (latestPayment) result.latestPayment = latestPayment;
   if (Object.keys(metadata).length > 0) result.metadata = metadata;
   return result;
+}
+
+export function IsOwnSubscription(
+  metadata: Stripe.Metadata | null | undefined,
+): boolean {
+  return Boolean(metadata && REFERENCE_KEY in metadata);
 }
