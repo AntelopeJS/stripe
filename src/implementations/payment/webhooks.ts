@@ -7,6 +7,8 @@ import type {
 } from "@antelopejs/interface-payment";
 
 import { GetAccount } from "./accounts";
+import { MarkSubscriptionCharge } from "./subscription-marker";
+import { DispatchSubscriptionEvent } from "../subscriptions/events";
 import { ToDispute, ToEpochMillis, ToPayment, ToRefund } from "./mapping";
 
 const SIGNATURE_HEADER = "stripe-signature";
@@ -78,7 +80,11 @@ async function buildEvent(
       client,
       event.data.object as Stripe.PaymentIntent,
     );
-    return { ...base, type: paymentType, payment: ToPayment(intent) };
+    return {
+      ...base,
+      type: paymentType,
+      payment: await MarkSubscriptionCharge(client, ToPayment(intent)),
+    };
   }
 
   if (REFUND_EVENTS[event.type]) {
@@ -119,5 +125,6 @@ export async function VerifyWebhook(
         error instanceof Error ? error.message : "The signature did not verify",
       );
     });
+  await DispatchSubscriptionEvent(client, event);
   return buildEvent(client, event);
 }

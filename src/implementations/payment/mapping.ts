@@ -79,7 +79,7 @@ function expanded<T extends object>(field: string | T | null): T | undefined {
 /**
  * Splits the caller's metadata from the reference this module hides in it.
  */
-function ReadMetadata(metadata: Stripe.Metadata | null): {
+export function ReadMetadata(metadata: Stripe.Metadata | null): {
   reference: string;
   metadata: Record<string, string>;
 } {

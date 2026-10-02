@@ -9,6 +9,7 @@ import type {
 import { GetAccount } from "./accounts";
 import { ToPayment, WriteMetadata } from "./mapping";
 import { TranslateError, Translating } from "./errors";
+import { MarkSubscriptionCharge } from "./subscription-marker";
 
 const PAYMENT_ENTITY = { entity: "payment" as const };
 const EXPAND_CHARGE = ["latest_charge"];
@@ -96,8 +97,11 @@ export async function GetPayment(
 ): Promise<Payment> {
   const { client } = GetAccount(provider);
   return Translating(id, PAYMENT_ENTITY, async () =>
-    ToPayment(
-      await client.paymentIntents.retrieve(id, { expand: EXPAND_CHARGE }),
+    MarkSubscriptionCharge(
+      client,
+      ToPayment(
+        await client.paymentIntents.retrieve(id, { expand: EXPAND_CHARGE }),
+      ),
     ),
   );
 }

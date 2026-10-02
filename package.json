@@ -1,7 +1,7 @@
 {
   "name": "@antelopejs/stripe",
   "version": "1.0.2",
-  "description": "A flexible payment module that implements the Stripe interface of antelopejs",
+  "description": "A flexible payment module that implements the Stripe, payment and subscriptions interfaces of antelopejs",
   "keywords": [
     "antelopejs",
     "billing",
@@ -38,6 +38,7 @@
     "@antelopejs/interface-core": ">=0.0.5 <1.0.0",
     "@antelopejs/interface-payment": "^0.1.0",
     "@antelopejs/interface-stripe": ">=0.0.4 <1.0.0",
+    "@antelopejs/interface-subscriptions": "^0.1.0",
     "stripe": "^18.5.0",
     "uuid": "11.1.0"
   },
@@ -64,7 +65,8 @@
   "antelopeJs": {
     "implements": [
       "@antelopejs/interface-payment",
-      "@antelopejs/interface-stripe"
+      "@antelopejs/interface-stripe",
+      "@antelopejs/interface-subscriptions"
     ],
     "defaultConfig": {
       "apiKey": "your_stripe_api_key",

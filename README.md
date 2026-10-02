@@ -19,11 +19,13 @@ ajs project modules add @antelopejs/stripe
 
 ## Interfaces
 
-This module implements the Stripe interface that provides comprehensive payment processing capabilities. The interface is installed separately to maintain modularity and minimize dependencies.
+This module implements three interfaces. Each is installed separately to maintain modularity and minimize dependencies.
 
-| Name   | Install command                 |                                                                 |
-| ------ | ------------------------------- | --------------------------------------------------------------- |
-| Stripe | `ajs module imports add stripe` | [Documentation](https://github.com/AntelopeJS/interface-stripe) |
+| Name          | Install command                        |                                                                        |
+| ------------- | -------------------------------------- | ---------------------------------------------------------------------- |
+| Stripe        | `ajs module imports add stripe`        | [Documentation](https://github.com/AntelopeJS/interface-stripe)        |
+| Payment       | `ajs module imports add payment`       | [Documentation](https://github.com/AntelopeJS/interface-payment)       |
+| Subscriptions | `ajs module imports add subscriptions` | [Documentation](https://github.com/AntelopeJS/interface-subscriptions) |
 
 ## Overview
 
@@ -39,8 +41,20 @@ The AntelopeJS Stripe module provides functionality for handling Stripe payment 
 
 This module depends on the following Antelope interfaces:
 
-- [**API Interface**](https://github.com/AntelopeJS/interface-api): Required to handle Stripe webhook events and route them to the appropriate handlers
-- [**Redis Interface**](https://github.com/AntelopeJS/interface-redis): Used to enable clustering capabilities, allowing payment intent monitoring and watching to work seamlessly across multiple instances
+- [**API Interface**](https://github.com/AntelopeJS/interface-api) (optional): mounts the built-in webhook endpoint of the Stripe interface. Consumers of the payment and subscriptions interfaces call `VerifyWebhook` from their own route instead.
+- [**Redis Interface**](https://github.com/AntelopeJS/interface-redis) (optional): enables clustering, so payment intent watching works across instances.
+
+## Subscriptions
+
+Subscriptions are Stripe's own: Stripe holds the schedule and fires every renewal, and this module maps the subscriptions interface onto it.
+
+- **Events come through `VerifyWebhook`.** Point a Stripe webhook at your route and pass every delivery to the payment interface's `VerifyWebhook`, as for payments. It also raises `customer.subscription.created`, `invoice.paid`, `invoice.payment_failed` and `customer.subscription.deleted` as subscription events, and waits for your `SubscriptionEvents` handlers: if one throws, `VerifyWebhook` rejects, your route answers with an error, and Stripe delivers again. Enable those four event types on the endpoint.
+- **One product.** Every subscription's price hangs off a product with the fixed id `antelopejs_subscriptions`, created on first use in each account. Do not archive it.
+- **The first period is charged or refused.** Subscriptions are created with `payment_behavior: "error_if_incomplete"`, so a declined first charge creates nothing and raises `SubscriptionPaymentError`. Stripe voids the declined attempt, so its payment reports `canceled`; the decline code is in `providerCode`.
+- **Statuses.** `unpaid`, `paused` and `incomplete` are reported as `past_due`; `incomplete_expired` as `canceled`. What happens after `past_due` follows the retry settings in your Stripe dashboard. The raw status is in `vendorData`.
+- **Cancelling now** writes `antelopejs-idempotency-key:<key>` into the cancellation comment, because Stripe applies idempotency keys only to POST requests and a cancellation is a DELETE. That mark is how a replayed cancellation is recognised.
+- **Subscription charges are marked.** A basil PaymentIntent no longer points at its invoice, so `GetPayment` and payment webhooks look the invoice up (one extra read) to set `antelopeSubscription` in the payment's metadata.
+- **Times** are kept to the second, as Stripe stores them.
 
 ## Configuration
 
