@@ -1,14 +1,17 @@
 {
   "name": "@antelopejs/stripe",
   "version": "1.0.2",
-  "description": "A flexible payment module that implements the Stripe interface of antelopejs",
+  "description": "Stripe payment module for AntelopeJS, implementing the Stripe interface with the Stripe SDK and webhooks",
   "keywords": [
     "antelopejs",
-    "billing",
-    "checkout",
     "payment",
-    "stripe"
+    "stripe",
+    "webhook"
   ],
+  "homepage": "https://interfaces.antelopejs.com/docs/stripe/introduction",
+  "bugs": {
+    "url": "https://github.com/AntelopeJS/stripe/issues"
+  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
