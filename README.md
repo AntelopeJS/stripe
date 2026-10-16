@@ -93,6 +93,11 @@ WatchPayment(intent.id, (id, paymentIntent, context) => {
 
 Send `intent.client_secret` to the browser to confirm the payment with Stripe.js. The watcher runs on every instance when the webhook reports a change; `context.local` is `true` on the instance that received the webhook.
 
+## Documentation
+
+- [Stripe](https://interfaces.antelopejs.com/docs/stripe/introduction): the `@antelopejs/interface-stripe` contract this module implements
+- [Configuration](https://framework.antelopejs.com/docs/concepts/configuration): module sources, `config` blocks and config variables in `antelope.config.ts`
+
 ## Compatibility
 
 | Package                        | Supported range  |
