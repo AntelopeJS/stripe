@@ -9,17 +9,17 @@ importers:
   .:
     dependencies:
       '@antelopejs/interface-api':
-        specifier: '>=0.0.5 <1.0.0'
-        version: 0.0.12(@antelopejs/interface-core@0.0.11)
+        specifier: '>=0.0.15 <1.0.0'
+        version: 0.0.15(@antelopejs/interface-core@0.2.4)
       '@antelopejs/interface-core':
-        specifier: '>=0.0.5 <1.0.0'
-        version: 0.0.11
+        specifier: '>=0.2.4 <1.0.0'
+        version: 0.2.4
       '@antelopejs/interface-redis':
-        specifier: '>=0.0.6 <1.0.0'
-        version: 0.0.8(@antelopejs/interface-core@0.0.11)
+        specifier: '>=0.0.9 <1.0.0'
+        version: 0.0.9(@antelopejs/interface-core@0.2.4)
       '@antelopejs/interface-stripe':
-        specifier: '>=0.0.4 <1.0.0'
-        version: 0.0.5(@antelopejs/interface-core@0.0.11)(@types/node@22.19.15)
+        specifier: '>=0.0.6 <1.0.0'
+        version: 0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)
       stripe:
         specifier: ^18.5.0
         version: 18.5.0(@types/node@22.19.15)
@@ -28,11 +28,11 @@ importers:
         version: 11.1.0
     devDependencies:
       '@antelopejs/core':
-        specifier: ^1.13.4
-        version: 1.13.4
+        specifier: ^1.16.0
+        version: 1.16.0
       '@antelopejs/tooling-configs':
-        specifier: ^0.0.8
-        version: 0.0.8(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))
+        specifier: ^0.0.9
+        version: 0.0.9(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))
       '@types/node':
         specifier: ^22.19.15
         version: 22.19.15
@@ -69,34 +69,31 @@ importers:
 
 packages:
 
-  '@antelopejs/core@1.13.4':
-    resolution: {integrity: sha512-nr28aF/uOLqfZ72HPIxt7cv3YfgAeXEemEZm7mOPCbAr1yXB6CMyBWFHlmlk/vdFChAunnsGwDYqWCDnjTXRnA==}
+  '@antelopejs/core@1.16.0':
+    resolution: {integrity: sha512-dj1R8xPgLzkTksfenPNh3kX1fffRnWktielk1yad/4/1wTEMhkPSx1WQ/4QI98d95L6Th0EMGTV/U4o84p/2yw==}
     engines: {node: '>=20.19'}
     hasBin: true
 
-  '@antelopejs/interface-api@0.0.12':
-    resolution: {integrity: sha512-28cZoGZ/BxO7jhbrZ/ueOK26+9cRPCA0jKpeJv155G8/RtqFVFcqG7SsVunuIubDT/ukRrb2JUFrnT0uvJV2mw==}
+  '@antelopejs/interface-api@0.0.15':
+    resolution: {integrity: sha512-BUtZXJcLoVaTwM+q4KpefVuoR235HUpQqd5nqAfx7S6CA3SED3EPnFFvCLzaNZXq3Vq6ErzqJqvir0TaI/kpXA==}
     peerDependencies:
-      '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
+      '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
-  '@antelopejs/interface-core@0.0.11':
-    resolution: {integrity: sha512-eKE3F9XY0eIzdLBXms8QAY4BHmA8+XXZnta0vZ411q9GiSbI2S1Q3lfYzmnXU4ZK9i+/SIYPplOsA02gIdxODg==}
+  '@antelopejs/interface-core@0.2.4':
+    resolution: {integrity: sha512-2qF6/KwahCQvvNuC/piUvPWD4wq2Npmco941HMg2/bMBoJKbhMH16WcXXRvPYznNSkU0U+6vqK6KE+2N5NojSA==}
 
-  '@antelopejs/interface-core@0.1.1':
-    resolution: {integrity: sha512-nGxElt51KGWIwGsUcFdGT7ikQEqDB+mLj4NQ/eFL/DI1+j65GJqq9PdkVT4x3/YKchNA48iMbzXyW7bKUsQ8Iw==}
-
-  '@antelopejs/interface-redis@0.0.8':
-    resolution: {integrity: sha512-f7pAEpZG50mw12opT80DPL0wLtFmIfuhPJHDuRHDD3kg7PeAqiMWb1AQH3nwRn/+lxtB5/2zdLGWrzZ8y4xRdw==}
+  '@antelopejs/interface-redis@0.0.9':
+    resolution: {integrity: sha512-lI1zcm2J13tP4D/QKmsdKFBRIzjZ/GdG4z27uaOp/3yKPA3RkH5YgpzFm9pgBa353UIhgZDuVkozFJcFkqewUA==}
     peerDependencies:
-      '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
+      '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
-  '@antelopejs/interface-stripe@0.0.5':
-    resolution: {integrity: sha512-DvKQgsdiE0bi3FroAG2L/5Vs6gk6DS5Z7t4FDqNVKJa7OCPmSxGNIpiZGttcLf8WjGwc8KsIPA1mYKWPZytMMA==}
+  '@antelopejs/interface-stripe@0.0.6':
+    resolution: {integrity: sha512-mJ4JQMGAxjlpJSgnJWgZYPcP/pFCGGIAylc/H+kuKGAgxuuJ3akmGjy442cf6D39OvSz4K8rYvw6RbCVX6pfTg==}
     peerDependencies:
-      '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
+      '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
-  '@antelopejs/tooling-configs@0.0.8':
-    resolution: {integrity: sha512-0oYe8o6if5cO444akfSuwfwiCQJtSeGXcJUM85K1uS11ir99p/QPRXYhAtiKBTpHBfGgeXKgm/KLaeWH5nThIg==}
+  '@antelopejs/tooling-configs@0.0.9':
+    resolution: {integrity: sha512-ceAS76KVZ1zDbXldNg/6cVDA9Xsh5FCG4WQgt51W0aJbv9XvpNDVuS53QCIyDL8Pwj0QaCCuK3a4p/QSAgCdDg==}
     engines: {node: '>=22.18.0'}
     hasBin: true
     peerDependencies:
@@ -2572,9 +2569,9 @@ packages:
 
 snapshots:
 
-  '@antelopejs/core@1.13.4':
+  '@antelopejs/core@1.16.0':
     dependencies:
-      '@antelopejs/interface-core': 0.1.1
+      '@antelopejs/interface-core': 0.2.4
       '@clack/prompts': 1.8.1
       '@types/proper-lockfile': 4.1.4
       commander: 13.1.0
@@ -2587,33 +2584,29 @@ snapshots:
       semver: 7.8.5
       typescript: 5.9.3
 
-  '@antelopejs/interface-api@0.0.12(@antelopejs/interface-core@0.0.11)':
+  '@antelopejs/interface-api@0.0.15(@antelopejs/interface-core@0.2.4)':
     dependencies:
-      '@antelopejs/interface-core': 0.0.11
+      '@antelopejs/interface-core': 0.2.4
 
-  '@antelopejs/interface-core@0.0.11':
+  '@antelopejs/interface-core@0.2.4':
     dependencies:
       reflect-metadata: 0.2.2
 
-  '@antelopejs/interface-core@0.1.1':
+  '@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.2.4)':
     dependencies:
-      reflect-metadata: 0.2.2
-
-  '@antelopejs/interface-redis@0.0.8(@antelopejs/interface-core@0.0.11)':
-    dependencies:
-      '@antelopejs/interface-core': 0.0.11
+      '@antelopejs/interface-core': 0.2.4
       ioredis: 5.10.1
     transitivePeerDependencies:
       - supports-color
 
-  '@antelopejs/interface-stripe@0.0.5(@antelopejs/interface-core@0.0.11)(@types/node@22.19.15)':
+  '@antelopejs/interface-stripe@0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)':
     dependencies:
-      '@antelopejs/interface-core': 0.0.11
+      '@antelopejs/interface-core': 0.2.4
       stripe: 18.5.0(@types/node@22.19.15)
     transitivePeerDependencies:
       - '@types/node'
 
-  '@antelopejs/tooling-configs@0.0.8(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))':
+  '@antelopejs/tooling-configs@0.0.9(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))':
     dependencies:
       '@oxlint/plugins': 1.81.0
     optionalDependencies:
