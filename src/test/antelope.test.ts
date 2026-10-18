@@ -1,8 +1,10 @@
 import { defineConfig } from "@antelopejs/interface-core/config";
+import Stripe from "stripe";
 
 const TEST_METHOD = "pm_card_visa";
 const TEST_METHOD_DECLINED = "pm_card_chargeDeclined";
 const TEST_CURRENCY = "EUR";
+const IS_LIVE = process.env.ANTELOPE_STRIPE_TEST_MODE === "live";
 
 /**
  * The signing secret the module is configured with for tests.
@@ -16,6 +18,11 @@ const TEST_CURRENCY = "EUR";
 const TEST_WEBHOOK_SECRET = "whsec_conformance_suite_never_signs_with_this";
 
 function requireApiKey(): string {
+  if (process.env.CI) {
+    throw new Error(
+      "Real Stripe tests are forbidden in CI; run pnpm test instead",
+    );
+  }
   const key = process.env.STRIPE_KEY;
   if (!key) {
     throw new Error(
@@ -28,6 +35,19 @@ function requireApiKey(): string {
     );
   }
   return key;
+}
+
+function offlineConfig(): Stripe.StripeConfig {
+  return {
+    maxNetworkRetries: 0,
+    httpClient: Stripe.createFetchHttpClient(async (url: string) => {
+      const path = new URL(url).pathname;
+      if (path !== "/v1/invoice_payments") {
+        throw new Error(`Unexpected Stripe request in offline tests: ${path}`);
+      }
+      return new Response(JSON.stringify({ data: [] }), { status: 200 });
+    }),
+  };
 }
 
 export default defineConfig({
@@ -47,8 +67,9 @@ export default defineConfig({
         modules: {
           local: {
             config: {
-              apiKey: requireApiKey(),
+              apiKey: IS_LIVE ? requireApiKey() : "sk_test_offline_fixture",
               webhookSecret: TEST_WEBHOOK_SECRET,
+              ...(IS_LIVE ? {} : offlineConfig()),
             },
           },
         },

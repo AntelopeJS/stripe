@@ -1,23 +1,30 @@
 {
   "name": "@antelopejs/stripe",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A flexible payment module that implements the Stripe, payment and subscriptions interfaces of antelopejs",
   "keywords": [
     "antelopejs",
-    "billing",
-    "checkout",
     "payment",
-    "stripe"
+    "stripe",
+    "webhook"
   ],
+  "homepage": "https://interfaces.antelopejs.com/docs/stripe/introduction",
+  "bugs": {
+    "url": "https://github.com/AntelopeJS/stripe/issues"
+  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AntelopeJS/stripe.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/test",
+    "docs",
+    "skills"
   ],
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -29,21 +36,23 @@
     "lint:fix": "oxlint --fix",
     "prepack": "pnpm run build",
     "release": "pnpm run lint && pnpm run test && pnpm run prepack && release-it",
-    "test": "pnpm run build && ajs module test .",
+    "test": "pnpm run build && ajs module test . -f dist/test/provider-regressions.test.js -f dist/test/webhook-events.test.js -f dist/test/interface-stripe.test.js",
+    "test:stripe": "pnpm run build && ANTELOPE_STRIPE_TEST_MODE=live ajs module test .",
     "typecheck": "tsc --noEmit",
     "format:check": "oxfmt --check .",
     "knip": "knip"
   },
   "dependencies": {
-    "@antelopejs/interface-core": ">=0.0.5 <1.0.0",
-    "@antelopejs/interface-payment": "^0.1.0",
-    "@antelopejs/interface-stripe": ">=0.0.4 <1.0.0",
-    "@antelopejs/interface-subscriptions": "^0.1.0",
+    "@antelopejs/interface-core": ">=0.2.4 <1.0.0",
+    "@antelopejs/interface-payment": ">=0.1.0 <0.2.0",
+    "@antelopejs/interface-stripe": ">=0.0.6 <0.1.0",
+    "@antelopejs/interface-subscriptions": ">=0.1.0 <0.2.0",
     "stripe": "^18.5.0",
     "uuid": "11.1.0"
   },
   "devDependencies": {
-    "@antelopejs/tooling-configs": "^0.0.4",
+    "@antelopejs/core": "^1.16.0",
+    "@antelopejs/tooling-configs": "^0.0.9",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.15",
     "@types/uuid": "10.0.0",
@@ -58,8 +67,8 @@
     "typescript": "^5.9.3"
   },
   "optionalDependencies": {
-    "@antelopejs/interface-api": ">=0.0.5 <1.0.0",
-    "@antelopejs/interface-redis": ">=0.0.6 <1.0.0"
+    "@antelopejs/interface-api": ">=0.0.15 <1.0.0",
+    "@antelopejs/interface-redis": ">=0.0.9 <1.0.0"
   },
   "packageManager": "pnpm@10.6.5",
   "antelopeJs": {
@@ -73,6 +82,9 @@
       "webhookSecret": "your_stripe_webhook_secret",
       "endpoint": "stripe"
     },
-    "test": "src/test/antelope.test.ts"
+    "test": "src/test/antelope.test.ts",
+    "skills": [
+      "./skills"
+    ]
   }
 }

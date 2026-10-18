@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.0.3
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v1.0.2...v1.0.3)
+
+### 📖 Documentation
+
+- **readme:** Remove social card image ([#18](https://github.com/AntelopeJS/stripe/pull/18))
+- Fix the outdated CLI commands in the README ([#25](https://github.com/AntelopeJS/stripe/pull/25))
+- Rewrite the README ([#27](https://github.com/AntelopeJS/stripe/pull/27))
+- **agents:** Simplify repository guidance ([#28](https://github.com/AntelopeJS/stripe/pull/28))
+
+### 🏡 Chore
+
+- Replace Biome with oxlint, oxfmt and Knip ([#15](https://github.com/AntelopeJS/stripe/pull/15))
+- Align community files with the organization defaults ([#17](https://github.com/AntelopeJS/stripe/pull/17))
+- Remove .git-blame-ignore-revs ([#19](https://github.com/AntelopeJS/stripe/pull/19))
+
+### 🤖 CI
+
+- Standardize npm releases ([#14](https://github.com/AntelopeJS/stripe/pull/14))
+- Use shared npm release workflow ([#16](https://github.com/AntelopeJS/stripe/pull/16))
+- **release:** Release next from a dedicated branch and restore requireCommits ([#20](https://github.com/AntelopeJS/stripe/pull/20))
+- **release:** Reference the shared release workflows through v1 ([#21](https://github.com/AntelopeJS/stripe/pull/21))
+- Pin the antelope core locally instead of installing it globally ([#22](https://github.com/AntelopeJS/stripe/pull/22))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli <rizzitelli.antony@pm.me>
+- Thomas
+
 ## v1.0.2
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v1.0.1...v1.0.2)
