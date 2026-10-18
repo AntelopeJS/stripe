@@ -1,6 +1,6 @@
 {
   "name": "@antelopejs/stripe",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A flexible payment module that implements the Stripe, payment and subscriptions interfaces of antelopejs",
   "keywords": [
     "antelopejs",

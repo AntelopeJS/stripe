@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.0
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v1.0.3...v1.1.0)
+
+### 🚀 Enhancements
+
+- Implement the payment and subscriptions interfaces ([#23](https://github.com/AntelopeJS/stripe/pull/23))
+
+### ❤️ Contributors
+
+- Thomas
+
 ## v1.0.3
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v1.0.2...v1.0.3)
