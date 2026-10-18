@@ -17,11 +17,11 @@ The AntelopeJS Stripe provider implements portable payments and Stripe-native su
 | `@antelopejs/interface-subscriptions` | Recurring billing scheduled by Stripe. This is the recommended subscription implementation for Stripe.           |
 | `@antelopejs/interface-stripe`        | Existing Stripe SDK integrations and payment watchers. See the [legacy Stripe guide](./docs/5.legacy-stripe.md). |
 
-The public-package target covers `@antelopejs/interface-payment`, `@antelopejs/interface-subscriptions`, `@antelopejs/payment-subscriptions` and this provider. These changes do not release those four packages; use the coordinated source checkouts until their matching versions are published. The generic `payment-subscriptions` scheduler is an explicit alternative, not a second scheduler to enable alongside Stripe-native subscriptions.
+Portable payments and Stripe-native subscriptions are available from `@antelopejs/stripe` 1.1.0 with the portable interfaces from 0.0.2. The generic `payment-subscriptions` scheduler is an explicit alternative, not a second scheduler to enable alongside Stripe-native subscriptions.
 
 ## Install and configure
 
-For published compatible versions, add the provider to the project and the payment interface to the consumer module:
+Add the provider to the project and the payment interface to the consumer module:
 
 ```bash
 ajs project modules add @antelopejs/stripe
@@ -29,7 +29,7 @@ ajs project modules install
 pnpm add @antelopejs/interface-payment
 ```
 
-For the unreleased changes, build the coordinated checkouts and configure a local module source instead of assuming the registry version includes them. The [configuration guide](./docs/1.configuration.md) provides a complete local-source example with environment overrides, multiple accounts and optional API/Redis dependencies.
+The [configuration guide](./docs/1.configuration.md) provides a complete package-source example with environment overrides, multiple accounts and optional API/Redis dependencies.
 
 ## Portable checkout
 
@@ -82,14 +82,14 @@ Store the session ID and redirect the payer to `redirectUrl`. A browser return i
 | `@antelopejs/interface-api`   | `>=0.0.15 <1.0.0` |
 | `@antelopejs/interface-redis` | `>=0.0.9 <1.0.0`  |
 
-These are the manifest's interface requirements, not claims about released availability. Development targets `@antelopejs/core` 1.16.0 on Node.js 24 and uses `stripe` `^18.5.0`.
+These are the manifest's interface requirements. Development targets `@antelopejs/core` 1.16.0 on Node.js 24 and uses `stripe` `^18.5.0`.
 
 ## Contributing and verification
 
 Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request. Run the local checks with pnpm:
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm test
 pnpm typecheck
 pnpm lint
