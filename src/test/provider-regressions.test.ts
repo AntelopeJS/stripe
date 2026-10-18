@@ -11,6 +11,7 @@ import {
 import { SignedWebhook } from "./signed-webhook";
 import { VerifyWebhook } from "../implementations/payment/webhooks";
 import { RegisterAccount } from "../implementations/payment/accounts";
+import { CreateCheckoutSession } from "../implementations/payment/checkout";
 import { CreateSubscription } from "../implementations/subscriptions/subscriptions";
 
 const PROVIDER = "provider-regression-tests";
@@ -86,6 +87,27 @@ class ProviderFixture {
       async (url: string, init?: RequestInit) => {
         const path = new URL(url).pathname;
         const routes: Record<string, () => Response> = {
+          "/v1/checkout/sessions": () => {
+            assert.ok(typeof init?.body === "string");
+            const params = new URLSearchParams(init.body);
+            if (params.get("managed_payments[enabled]") !== "false") {
+              return response(
+                {
+                  error: {
+                    type: "invalid_request_error",
+                    message: "Managed Payments requires a product tax code",
+                  },
+                },
+                400,
+              );
+            }
+            return response({
+              id: "cs_test",
+              url: "https://checkout.stripe.com/test",
+              status: "open",
+              payment_intent: null,
+            });
+          },
           "/v1/subscriptions": () => this.create(init),
           "/v1/products": () => response({ id: "prod_test" }),
           "/v1/charges/ch_test": () => this.charge(),
@@ -171,6 +193,22 @@ describe("[stripe] provider boundary regressions without credentials", () => {
   function deliver(type: string, object: unknown) {
     return VerifyWebhook(SignedWebhook(type, object, SECRET), PROVIDER);
   }
+
+  it("creates standard checkout when the account defaults to Managed Payments", async () => {
+    const session = await CreateCheckoutSession(
+      {
+        reference: "checkout-test",
+        amount: { value: AMOUNT, currency: "EUR" },
+        successUrl: "https://merchant.invalid/success",
+        cancelUrl: "https://merchant.invalid/cancel",
+      },
+      "standard-checkout",
+      PROVIDER,
+    );
+    assert.equal(session.id, "cs_test");
+    assert.equal(session.status, "pending");
+    assert.equal(session.redirectUrl, "https://checkout.stripe.com/test");
+  });
 
   it("reports an immediately successful refund, but not a pending creation", async () => {
     const refund = {

@@ -14,6 +14,11 @@ const SESSION_ENTITY = { entity: "checkout session" as const };
 const OPEN = "open";
 const EXPAND_INTENT = ["payment_intent"];
 
+// Stripe 18's types predate this supported Checkout parameter.
+interface StandardCheckoutParams extends Stripe.Checkout.SessionCreateParams {
+  managed_payments: { enabled: false };
+}
+
 const STATUS_BY_SESSION_STATUS: Record<string, PaymentStatus> = {
   complete: "succeeded",
   expired: "canceled",
@@ -73,34 +78,30 @@ export async function CreateCheckoutSession(
     throw new PaymentError("savePaymentMethod requires a customer");
   }
   const { client } = GetAccount(provider);
+  const params: StandardCheckoutParams = {
+    mode: "payment",
+    managed_payments: { enabled: false },
+    line_items: [lineItem(request)],
+    success_url: request.successUrl,
+    cancel_url: request.cancelUrl,
+    metadata: WriteMetadata(request.reference, request.metadata),
+    payment_intent_data: {
+      metadata: WriteMetadata(request.reference, request.metadata),
+      ...(request.authorizeOnly ? { capture_method: "manual" as const } : {}),
+      ...(request.savePaymentMethod
+        ? { setup_future_usage: "off_session" as const }
+        : {}),
+    },
+    ...(request.customer ? { customer: request.customer } : {}),
+    ...(request.locale
+      ? {
+          locale: request.locale as Stripe.Checkout.SessionCreateParams.Locale,
+        }
+      : {}),
+  };
   return Translating("", SESSION_ENTITY, async () =>
     toSession(
-      await client.checkout.sessions.create(
-        {
-          mode: "payment",
-          line_items: [lineItem(request)],
-          success_url: request.successUrl,
-          cancel_url: request.cancelUrl,
-          metadata: WriteMetadata(request.reference, request.metadata),
-          payment_intent_data: {
-            metadata: WriteMetadata(request.reference, request.metadata),
-            ...(request.authorizeOnly
-              ? { capture_method: "manual" as const }
-              : {}),
-            ...(request.savePaymentMethod
-              ? { setup_future_usage: "off_session" as const }
-              : {}),
-          },
-          ...(request.customer ? { customer: request.customer } : {}),
-          ...(request.locale
-            ? {
-                locale:
-                  request.locale as Stripe.Checkout.SessionCreateParams.Locale,
-              }
-            : {}),
-        },
-        { idempotencyKey },
-      ),
+      await client.checkout.sessions.create(params, { idempotencyKey }),
     ),
   );
 }
