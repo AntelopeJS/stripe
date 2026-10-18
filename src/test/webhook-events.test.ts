@@ -50,7 +50,7 @@ function intent(overrides: Record<string, unknown>): Record<string, unknown> {
     created: CREATED_SECONDS,
     status: "succeeded",
     metadata: { antelope_reference: "order-99", tier: "gold" },
-    latest_charge: "ch_webhook",
+    latest_charge: { id: "ch_webhook", amount_refunded: 0 },
     ...overrides,
   };
 }

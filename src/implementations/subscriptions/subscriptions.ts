@@ -102,7 +102,7 @@ export async function CreateSubscription(
   idempotencyKey: string,
   provider?: string,
 ): Promise<Subscription> {
-  ValidateSubscriptionRequest(request, Date.now());
+  ValidateSubscriptionRequest(request);
   const client = clientFor(provider);
   const product = await TranslatingSubscription(request.customer, () =>
     SubscriptionProduct(client),
@@ -115,10 +115,10 @@ export async function CreateSubscription(
     return ToSubscription(created);
   } catch (error) {
     const declined = await declinedPayment(client, error);
-    if (declined) {
+    if (declined && error instanceof Stripe.errors.StripeCardError) {
       throw new SubscriptionPaymentError(
         declined,
-        (error as Stripe.errors.StripeError).code,
+        error.decline_code ?? error.code,
       );
     }
     throw TranslateSubscriptionError(error, request.customer);

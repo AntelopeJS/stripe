@@ -22,6 +22,7 @@ const PAYMENT_EVENTS: Record<string, PaymentEventType> = {
 };
 
 const REFUND_EVENTS: Record<string, PaymentEventType> = {
+  "refund.created": "refund.succeeded",
   "refund.failed": "refund.failed",
   "refund.updated": "refund.succeeded",
 };
@@ -43,18 +44,6 @@ function readSignature(headers: WebhookRequest["headers"]): string {
   return signature;
 }
 
-/**
- * Stripe signs the raw bytes, so a verified body is authentic data and the
- * event is built from it. That is the signed half of the interface's rule about
- * where an event's fields may come from; a provider established by re-fetching
- * instead would have to read every field back from the record.
- */
-/**
- * A webhook body carries `latest_charge` as a bare id, and the refunded total
- * lives on the charge. Left alone, a `payment_intent.succeeded` for an intent
- * that already has refunds would report `amountRefunded` as zero — a wrong
- * value, not an unknown one. One read settles it.
- */
 async function withRefundedTotal(
   client: Stripe,
   intent: Stripe.PaymentIntent,
@@ -62,10 +51,8 @@ async function withRefundedTotal(
   if (typeof intent.latest_charge !== "string") {
     return intent;
   }
-  const charge = await client.charges
-    .retrieve(intent.latest_charge)
-    .catch(() => undefined);
-  return charge ? { ...intent, latest_charge: charge } : intent;
+  const charge = await client.charges.retrieve(intent.latest_charge);
+  return { ...intent, latest_charge: charge };
 }
 
 async function buildEvent(

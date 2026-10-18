@@ -5,7 +5,6 @@ import {
   CreateCustomer,
   CreatePayment,
   ListPaymentMethods,
-  VerifyWebhook,
 } from "@antelopejs/interface-payment";
 import {
   CancelSubscription,
@@ -17,35 +16,17 @@ import {
   SubscriptionEvents,
 } from "@antelopejs/interface-subscriptions";
 
+import { DeliverWebhook as deliver } from "./signed-webhook";
+
 const SUITE_TIMEOUT = 120_000;
-const SECRET = process.env.STRIPE_TEST_WEBHOOK_SECRET ?? "";
 const SECOND_MS = 1000;
 const TRIAL_MS = 7 * 24 * 60 * 60 * SECOND_MS;
 const AMOUNT = { value: 1900, currency: "EUR" };
 const HANDLER = "stripe-subscription-events";
 
 const client = new Stripe(process.env.STRIPE_KEY ?? "");
-const signer = new Stripe("sk_test_unused_for_signing_only");
 const received: SubscriptionEvent[] = [];
 let shouldFail = false;
-
-function deliver(type: string, object: unknown) {
-  const payload = JSON.stringify({
-    id: `evt_${randomUUID().replace(/-/g, "")}`,
-    object: "event",
-    created: Math.floor(Date.now() / SECOND_MS),
-    type,
-    data: { object },
-  });
-  const signature = signer.webhooks.generateTestHeaderString({
-    payload,
-    secret: SECRET,
-  });
-  return VerifyWebhook({
-    body: Buffer.from(payload),
-    headers: { "stripe-signature": signature },
-  });
-}
 
 async function payer(): Promise<{ customer: string; method: string }> {
   const customer = await CreateCustomer({}, `events-${randomUUID()}`);

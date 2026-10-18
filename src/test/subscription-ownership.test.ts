@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { GetPayment, VerifyWebhook } from "@antelopejs/interface-payment";
+import { GetPayment } from "@antelopejs/interface-payment";
 import {
   CancelSubscription,
   GetSubscription,
@@ -13,36 +13,16 @@ import {
   UpdateSubscriptionPaymentMethod,
 } from "@antelopejs/interface-subscriptions";
 
+import { DeliverWebhook as deliver } from "./signed-webhook";
+
 const SUITE_TIMEOUT = 120_000;
-const SECRET = process.env.STRIPE_TEST_WEBHOOK_SECRET ?? "";
-const SECOND_MS = 1000;
 const HANDLER = "stripe-subscription-ownership";
 
 const client = new Stripe(process.env.STRIPE_KEY ?? "");
-const signer = new Stripe("sk_test_unused_for_signing_only");
 const received: SubscriptionEvent[] = [];
 let foreign: Stripe.Subscription;
 let product: string;
 let method: string;
-
-function deliver(type: string, object: unknown) {
-  const payload = JSON.stringify({
-    id: `evt_${randomUUID().replace(/-/g, "")}`,
-    object: "event",
-    created: Math.floor(Date.now() / SECOND_MS),
-    type,
-    data: { object },
-  });
-  return VerifyWebhook({
-    body: Buffer.from(payload),
-    headers: {
-      "stripe-signature": signer.webhooks.generateTestHeaderString({
-        payload,
-        secret: SECRET,
-      }),
-    },
-  });
-}
 
 async function createdElsewhere(): Promise<Stripe.Subscription> {
   const customer = await client.customers.create({
