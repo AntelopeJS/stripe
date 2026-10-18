@@ -25,6 +25,12 @@ jobs:
         run: |
           echo "$PR_TITLE" | grep -Eq '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([^)]+\))?!?: .+'
       - run: pnpm install --frozen-lockfile
+      - uses: AntelopeJS/tooling-configs/actions/docs@310e3d861b2da2244902854379176c91e1ebc68e
+        with:
+          files: |
+            README.md
+            docs
+          typescript-project: docs/tsconfig.json
       - run: pnpm prepack
       - run: pnpm lint
       - run: pnpm format:check
