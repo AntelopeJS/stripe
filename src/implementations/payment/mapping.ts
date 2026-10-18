@@ -76,13 +76,17 @@ function expanded<T extends object>(field: string | T | null): T | undefined {
   return field && typeof field !== "string" ? field : undefined;
 }
 
+interface PaymentMetadata {
+  reference: string;
+  metadata: Record<string, string>;
+}
+
 /**
  * Splits the caller's metadata from the reference this module hides in it.
  */
-export function ReadMetadata(metadata: Stripe.Metadata | null): {
-  reference: string;
-  metadata: Record<string, string>;
-} {
+export function ReadMetadata(
+  metadata: Stripe.Metadata | null,
+): PaymentMetadata {
   const entries = Object.entries(metadata ?? {});
   const own = entries.filter(([field]) => field !== REFERENCE_KEY);
   return {
