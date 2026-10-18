@@ -1,8 +1,0 @@
-packages:
-  - "."
-  - ".ci/dependencies/*"
-
-# Source-only validation until the coordinated interfaces are published.
-overrides:
-  "@antelopejs/interface-payment": workspace:*
-  "@antelopejs/interface-subscriptions": workspace:*

@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@antelopejs/interface-payment': workspace:*
-  '@antelopejs/interface-subscriptions': workspace:*
-
 importers:
 
   .:
@@ -16,14 +12,14 @@ importers:
         specifier: '>=0.2.4 <1.0.0'
         version: 0.2.4
       '@antelopejs/interface-payment':
-        specifier: workspace:*
-        version: link:.ci/dependencies/interface-payment
+        specifier: '>=0.0.2 <0.1.0'
+        version: 0.0.2(@antelopejs/interface-core@0.2.4)
       '@antelopejs/interface-stripe':
         specifier: '>=0.0.6 <0.1.0'
         version: 0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)
       '@antelopejs/interface-subscriptions':
-        specifier: workspace:*
-        version: link:.ci/dependencies/interface-subscriptions
+        specifier: '>=0.0.2 <0.1.0'
+        version: 0.0.2(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.0.2(@antelopejs/interface-core@0.2.4))
       stripe:
         specifier: ^18.5.0
         version: 18.5.0(@types/node@22.19.15)
@@ -81,99 +77,6 @@ importers:
         specifier: '>=0.0.9 <1.0.0'
         version: 0.0.9(@antelopejs/interface-core@0.2.4)
 
-  .ci/dependencies/interface-payment:
-    devDependencies:
-      '@antelopejs/core':
-        specifier: 1.16.0
-        version: 1.16.0
-      '@antelopejs/interface-core':
-        specifier: '>=0.0.3 <1.0.0'
-        version: 0.2.4
-      '@antelopejs/tooling-configs':
-        specifier: ^0.0.8
-        version: 0.0.8(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))
-      '@types/mocha':
-        specifier: ^10.0.10
-        version: 10.0.10
-      '@types/node':
-        specifier: ^22.19.15
-        version: 22.19.15
-      eslint-plugin-perfectionist:
-        specifier: ^5.11.0
-        version: 5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3)
-      knip:
-        specifier: ^6.34.0
-        version: 6.34.0
-      oxfmt:
-        specifier: ^0.66.0
-        version: 0.66.0
-      oxlint:
-        specifier: 1.81.0
-        version: 1.81.0(oxlint-tsgolint@7.0.2001)
-      oxlint-tsgolint:
-        specifier: ^7.0.2001
-        version: 7.0.2001
-      release-it:
-        specifier: ^19.2.4
-        version: 19.2.4(@types/node@22.19.15)
-      release-it-changelogen:
-        specifier: ^0.1.0
-        version: 0.1.0(changelogen@0.5.7)(release-it@19.2.4(@types/node@22.19.15))(semver@7.8.5)
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-
-  .ci/dependencies/interface-subscriptions:
-    devDependencies:
-      '@antelopejs/core':
-        specifier: 1.16.0
-        version: 1.16.0
-      '@antelopejs/interface-core':
-        specifier: '>=0.0.5 <1.0.0'
-        version: 0.2.4
-      '@antelopejs/interface-payment':
-        specifier: workspace:*
-        version: link:../interface-payment
-      '@antelopejs/tooling-configs':
-        specifier: ^0.0.8
-        version: 0.0.8(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))
-      '@types/mocha':
-        specifier: ^10.0.10
-        version: 10.0.10
-      '@types/node':
-        specifier: ^22.19.15
-        version: 22.19.15
-      eslint-plugin-perfectionist:
-        specifier: ^5.11.0
-        version: 5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3)
-      knip:
-        specifier: ^6.34.0
-        version: 6.34.0
-      oxfmt:
-        specifier: ^0.66.0
-        version: 0.66.0
-      oxlint:
-        specifier: 1.81.0
-        version: 1.81.0(oxlint-tsgolint@7.0.2001)
-      oxlint-tsgolint:
-        specifier: ^7.0.2001
-        version: 7.0.2001
-      release-it:
-        specifier: ^19.2.4
-        version: 19.2.4(@types/node@22.19.15)
-      release-it-changelogen:
-        specifier: ^0.1.0
-        version: 0.1.0(changelogen@0.5.7)(release-it@19.2.4(@types/node@22.19.15))(semver@7.8.5)
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-
 packages:
 
   '@antelopejs/core@1.16.0':
@@ -189,6 +92,11 @@ packages:
   '@antelopejs/interface-core@0.2.4':
     resolution: {integrity: sha512-2qF6/KwahCQvvNuC/piUvPWD4wq2Npmco941HMg2/bMBoJKbhMH16WcXXRvPYznNSkU0U+6vqK6KE+2N5NojSA==}
 
+  '@antelopejs/interface-payment@0.0.2':
+    resolution: {integrity: sha512-U72ATKewYgs628xT5MVO70IutcVXGOpw8Vnb7iUh3wjOLLn3pK13RR5rMrMuSnBbIzhltvFpBT4f4rjSDArHSw==}
+    peerDependencies:
+      '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
+
   '@antelopejs/interface-redis@0.0.9':
     resolution: {integrity: sha512-lI1zcm2J13tP4D/QKmsdKFBRIzjZ/GdG4z27uaOp/3yKPA3RkH5YgpzFm9pgBa353UIhgZDuVkozFJcFkqewUA==}
     peerDependencies:
@@ -199,27 +107,11 @@ packages:
     peerDependencies:
       '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
-  '@antelopejs/tooling-configs@0.0.8':
-    resolution: {integrity: sha512-0oYe8o6if5cO444akfSuwfwiCQJtSeGXcJUM85K1uS11ir99p/QPRXYhAtiKBTpHBfGgeXKgm/KLaeWH5nThIg==}
-    engines: {node: '>=22.18.0'}
-    hasBin: true
+  '@antelopejs/interface-subscriptions@0.0.2':
+    resolution: {integrity: sha512-ineU+bO4dpeP7nv52mV+klnTzUNmzktXPF/y6PQ3T0KqTOg1awl2OWkOnN4ULvOCvih3SG/zor/QOWWLPhQriw==}
     peerDependencies:
-      '@nuxt/eslint-config': '>=1.2.0'
-      eslint-plugin-perfectionist: '>=5.0.0'
-      knip: '>=6.0.0'
-      oxfmt: ^0.66.0
-      oxlint: 1.81.0
-    peerDependenciesMeta:
-      '@nuxt/eslint-config':
-        optional: true
-      eslint-plugin-perfectionist:
-        optional: true
-      knip:
-        optional: true
-      oxfmt:
-        optional: true
-      oxlint:
-        optional: true
+      '@antelopejs/interface-core': '>=0.0.5 <1.0.0'
+      '@antelopejs/interface-payment': '>=0.0.2 <1.0.0'
 
   '@antelopejs/tooling-configs@0.0.9':
     resolution: {integrity: sha512-ceAS76KVZ1zDbXldNg/6cVDA9Xsh5FCG4WQgt51W0aJbv9XvpNDVuS53QCIyDL8Pwj0QaCCuK3a4p/QSAgCdDg==}
@@ -2725,6 +2617,10 @@ snapshots:
     dependencies:
       reflect-metadata: 0.2.2
 
+  '@antelopejs/interface-payment@0.0.2(@antelopejs/interface-core@0.2.4)':
+    dependencies:
+      '@antelopejs/interface-core': 0.2.4
+
   '@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.2.4)':
     dependencies:
       '@antelopejs/interface-core': 0.2.4
@@ -2740,14 +2636,10 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@antelopejs/tooling-configs@0.0.8(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))':
+  '@antelopejs/interface-subscriptions@0.0.2(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.0.2(@antelopejs/interface-core@0.2.4))':
     dependencies:
-      '@oxlint/plugins': 1.81.0
-    optionalDependencies:
-      eslint-plugin-perfectionist: 5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3)
-      knip: 6.34.0
-      oxfmt: 0.66.0
-      oxlint: 1.81.0(oxlint-tsgolint@7.0.2001)
+      '@antelopejs/interface-core': 0.2.4
+      '@antelopejs/interface-payment': 0.0.2(@antelopejs/interface-core@0.2.4)
 
   '@antelopejs/tooling-configs@0.0.9(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))':
     dependencies:
