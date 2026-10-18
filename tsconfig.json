@@ -16,7 +16,8 @@
     "emitDecoratorMetadata": true,
     "declaration": true,
     "sourceMap": true,
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "types": ["node", "mocha"]
   },
   "include": ["src/**/*.ts"]
 }

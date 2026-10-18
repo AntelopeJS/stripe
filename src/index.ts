@@ -1,21 +1,38 @@
 import Stripe from "stripe";
 import { v4 as uuidv4 } from "uuid";
-import { GetClient } from "@antelopejs/interface-redis";
+import * as payment from "@antelopejs/interface-payment";
+import type { GetClient } from "@antelopejs/interface-redis";
+import * as subscriptions from "@antelopejs/interface-subscriptions";
 import { internal as internalv1 } from "@antelopejs/interface-stripe";
 import {
-  Controller,
-  HTTPResult,
-  Parameter,
-  Post,
-  RawBody,
-} from "@antelopejs/interface-api";
+  GetInterfaceInstances,
+  ImplementInterface,
+} from "@antelopejs/interface-core";
+
+import {
+  ClearAccounts,
+  RegisterAccount,
+} from "./implementations/payment/accounts";
 
 type RedisClient = Awaited<ReturnType<typeof GetClient>>;
+type RedisModule = typeof import("@antelopejs/interface-redis");
+type ApiModule = typeof import("@antelopejs/interface-api");
+
+interface AccountConfig {
+  apiKey: string;
+  webhookSecret: string;
+}
 
 interface Config extends Stripe.StripeConfig {
   endpoint?: string;
   apiKey: string;
   webhookSecret: string;
+  /**
+   * Additional Stripe accounts, keyed by the name callers pass as the payment
+   * interface's trailing `provider` selector. The top-level apiKey is the
+   * default account, used when no selector is given.
+   */
+  accounts?: Record<string, AccountConfig>;
 }
 
 type RedisPaymentIntentChanges = {
@@ -24,6 +41,8 @@ type RedisPaymentIntentChanges = {
 };
 
 const PAYMENT_INTENT_CHANGES_CHANNEL = "stripe:payment_intent:changes";
+const REDIS_INTERFACE = "@antelopejs/interface-redis";
+const API_INTERFACE = "@antelopejs/interface-api";
 const PROCESSED_MESSAGE_IDS_LIMIT = 1000;
 
 let client: Stripe;
@@ -32,23 +51,73 @@ let redisClient: RedisClient;
 let redisClientSubscriber: RedisClient | undefined;
 const processedMessageIds = new Set<string>();
 
-export function construct(config: Config): void {
-  stripeConfig = config;
-  const strippedConfig = { ...config };
-  Reflect.deleteProperty(strippedConfig, "endpoint");
-  Reflect.deleteProperty(strippedConfig, "apiKey");
-  Reflect.deleteProperty(strippedConfig, "webhookSecret");
-  client = new Stripe(stripeConfig.apiKey, strippedConfig);
-
-  makeStripeController(stripeConfig.endpoint || "stripe");
+function clientOptions(config: Config): Stripe.StripeConfig {
+  const options = { ...config };
+  Reflect.deleteProperty(options, "endpoint");
+  Reflect.deleteProperty(options, "apiKey");
+  Reflect.deleteProperty(options, "webhookSecret");
+  Reflect.deleteProperty(options, "accounts");
+  return options;
 }
 
-export function destroy(): void {}
+function registerAccounts(config: Config, options: Stripe.StripeConfig): void {
+  RegisterAccount(undefined, client, config.webhookSecret);
+  for (const [name, account] of Object.entries(config.accounts ?? {})) {
+    RegisterAccount(
+      name,
+      new Stripe(account.apiKey, options),
+      account.webhookSecret,
+    );
+  }
+}
+
+export async function construct(config: Config): Promise<void> {
+  stripeConfig = config;
+  const options = clientOptions(config);
+  client = new Stripe(stripeConfig.apiKey, options);
+  registerAccounts(config, options);
+
+  await ImplementInterface(payment, await import("./implementations/payment"));
+  ImplementInterface(
+    subscriptions,
+    await import("./implementations/subscriptions"),
+  );
+
+  if (!hasInterface(API_INTERFACE)) {
+    process.stderr.write(
+      `No module implements ${API_INTERFACE}; the built-in Stripe webhook endpoint is not mounted. ` +
+        "Consumers of @antelopejs/interface-payment should call VerifyWebhook from their own route.\n",
+    );
+    return;
+  }
+  const api: ApiModule = await import("@antelopejs/interface-api");
+  makeStripeController(api, stripeConfig.endpoint || "stripe");
+}
+
+export function destroy(): void {
+  ClearAccounts();
+}
+
+/**
+ * Redis carries payment intent changes between cluster instances. It is optional:
+ * a module implementing the generic payment interface must not force every
+ * payment consumer to run Redis, and an interface proxy queues rather than
+ * throwing when nothing implements it, so an unconditional GetClient() hangs
+ * start() forever instead of failing.
+ */
+function hasInterface(name: string): boolean {
+  return GetInterfaceInstances(name).length > 0;
+}
 
 export async function start(): Promise<void> {
   internalv1.SetClient(client);
 
-  redisClient = await GetClient();
+  if (!hasInterface(REDIS_INTERFACE)) {
+    return;
+  }
+
+  const redis: RedisModule = await import("@antelopejs/interface-redis");
+  redisClient = await redis.GetClient();
 
   redisClientSubscriber = redisClient.duplicate();
   redisClientSubscriber.on("message", handlePaymentIntentChangesMessage);
@@ -92,7 +161,8 @@ function reportRedisMessageProcessingError(error: unknown): void {
   );
 }
 
-const makeStripeController = (path: string) => {
+const makeStripeController = (api: ApiModule, path: string) => {
+  const { Controller, HTTPResult, Parameter, Post, RawBody } = api;
   abstract class StripeController extends Controller(path) {
     @Post()
     async webhook(

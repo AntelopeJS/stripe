@@ -4,123 +4,103 @@
 <a href="https://www.npmjs.com/package/@antelopejs/stripe"><img alt="npm" src="https://img.shields.io/npm/v/@antelopejs/stripe?style=for-the-badge&labelColor=000000&color=000000"></a>
 <a href="./LICENSE"><img alt="License" src="https://img.shields.io/npm/l/@antelopejs/stripe?style=for-the-badge&labelColor=000000&color=000000"></a>
 <a href="https://discord.gg/sjK28QHrA7"><img src="https://img.shields.io/badge/Discord-18181B?logo=discord&style=for-the-badge&color=000000" alt="Discord"></a>
-<a href="https://interfaces.antelopejs.com/docs/stripe/introduction"><img src="https://img.shields.io/badge/Docs-18181B?style=for-the-badge&color=000000" alt="Documentation"></a>
+<a href="./docs/1.configuration.md"><img src="https://img.shields.io/badge/Docs-18181B?style=for-the-badge&color=000000" alt="Documentation"></a>
 </div>
 
-The AntelopeJS payment module: it serves the Stripe interface with the official [`stripe`](https://github.com/stripe/stripe-node) SDK, receives Stripe webhooks, and shares payment intent updates between instances through Redis.
+The AntelopeJS Stripe provider implements portable payments and Stripe-native subscriptions with the official [`stripe`](https://github.com/stripe/stripe-node) SDK. It also preserves the existing Stripe-specific API, including payment watchers and optional Redis fan-out.
 
-## Interfaces
+## Choose an interface
 
-| Interface                                                                        | Documentation                                                        |
-| -------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| [`@antelopejs/interface-stripe`](https://github.com/AntelopeJS/interface-stripe) | [Stripe](https://interfaces.antelopejs.com/docs/stripe/introduction) |
+| Consumer dependency                   | Use it for                                                                                                       |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `@antelopejs/interface-payment`       | Hosted checkout, direct payments, capture, refunds, customers, saved methods and normalized webhooks.            |
+| `@antelopejs/interface-subscriptions` | Recurring billing scheduled by Stripe. This is the recommended subscription implementation for Stripe.           |
+| `@antelopejs/interface-stripe`        | Existing Stripe SDK integrations and payment watchers. See the [legacy Stripe guide](./docs/5.legacy-stripe.md). |
 
-The module also needs a module for each of these interfaces:
+The public-package target covers `@antelopejs/interface-payment`, `@antelopejs/interface-subscriptions`, `@antelopejs/payment-subscriptions` and this provider. These changes do not release those four packages; use the coordinated source checkouts until their matching versions are published. The generic `payment-subscriptions` scheduler is an explicit alternative, not a second scheduler to enable alongside Stripe-native subscriptions.
 
-- [`@antelopejs/interface-api`](https://interfaces.antelopejs.com/docs/api/introduction), for the webhook route, served by [`@antelopejs/api`](https://github.com/AntelopeJS/api).
-- [`@antelopejs/interface-redis`](https://interfaces.antelopejs.com/docs/redis/introduction), to broadcast payment intent changes, served by [`@antelopejs/redis`](https://github.com/AntelopeJS/redis). The module waits for a Redis client before it starts.
+## Install and configure
 
-## Install
+For published compatible versions, add the provider to the project and the payment interface to the consumer module:
 
 ```bash
 ajs project modules add @antelopejs/stripe
 ajs project modules install
+pnpm add @antelopejs/interface-payment
 ```
 
-`ajs project modules install` adds the API and Redis modules when the project has none yet.
+For the unreleased changes, build the coordinated checkouts and configure a local module source instead of assuming the registry version includes them. The [configuration guide](./docs/1.configuration.md) provides a complete local-source example with environment overrides, multiple accounts and optional API/Redis dependencies.
 
-## Configuration
+## Portable checkout
 
-```typescript [antelope.config.ts]
-import { defineConfig } from "@antelopejs/interface-core/config";
+Call this function from a consumer module running in AntelopeJS with this provider configured. The amount is an integer in minor units: `2500 EUR` means €25.00. Persist one idempotency key per logical checkout attempt and reuse it only for retries of that attempt.
 
-export default defineConfig({
-  name: "my-project",
-  modules: {
-    stripe: {
-      source: {
-        type: "package",
-        package: "@antelopejs/stripe",
-        version: "^1.0.2",
-      },
-      config: {
-        apiKey: "sk_test_...",
-        webhookSecret: "whsec_...",
-        endpoint: "stripe",
-        maxNetworkRetries: 2,
-      },
+```typescript [checkout.ts] docs-check
+import { CreateCheckoutSession } from "@antelopejs/interface-payment";
+
+export async function checkoutOrder42() {
+  const session = await CreateCheckoutSession(
+    {
+      reference: "order-42",
+      amount: { value: 2500, currency: "EUR" },
+      description: "Order 42",
+      successUrl: "https://shop.example/orders/42/return",
+      cancelUrl: "https://shop.example/orders/42/cancel",
     },
-  },
-  envOverrides: {
-    STRIPE_SECRET_KEY: "modules.stripe.config.apiKey",
-    STRIPE_WEBHOOK_SECRET: "modules.stripe.config.webhookSecret",
-  },
-});
+    "order-42:checkout:attempt-1",
+  );
+  return { sessionId: session.id, redirectUrl: session.redirectUrl };
+}
 ```
 
-| Key             | Description                                                                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apiKey`        | Stripe secret key.                                                                                                                          |
-| `webhookSecret` | Signing secret of the webhook endpoint, used to verify each event.                                                                          |
-| `endpoint`      | Path of the webhook route. Defaults to `stripe`, which serves `POST /stripe`.                                                               |
-| any other key   | Passed to the SDK as [`StripeConfig`](https://github.com/stripe/stripe-node#configuration) (`apiVersion`, `maxNetworkRetries`, `timeout`…). |
-
-`ajs project modules add` writes placeholder values for `apiKey` and `webhookSecret`: replace them before starting the project.
-
-Point a Stripe webhook endpoint at `<public API origin>/<endpoint>` and subscribe it to the `payment_intent.*` events your modules watch. Requests whose `stripe-signature` header does not verify get a `403`.
-
-## Quick start
-
-In the module that takes payments, add the interface:
-
-```bash
-pnpm add @antelopejs/interface-stripe
-```
-
-```typescript
-import { InitializePayment, WatchPayment } from "@antelopejs/interface-stripe";
-
-const intent = await InitializePayment("order-42", {
-  amount: 2500,
-  currency: "eur",
-  payment_method_types: ["card"],
-});
-
-WatchPayment(intent.id, (id, paymentIntent, context) => {
-  console.log(id, paymentIntent.status, context.local);
-});
-```
-
-Send `intent.client_secret` to the browser to confirm the payment with Stripe.js. The watcher runs on every instance when the webhook reports a change; `context.local` is `true` on the instance that received the webhook.
+Store the session ID and redirect the payer to `redirectUrl`. A browser return is not proof of payment: read `GetCheckoutSession` on return and fulfill from verified, deduplicated [webhook events](./docs/3.webhooks.md).
 
 ## Documentation
 
-- [Stripe](https://interfaces.antelopejs.com/docs/stripe/introduction): the `@antelopejs/interface-stripe` contract this module implements
-- [Configuration](https://framework.antelopejs.com/docs/concepts/configuration): module sources, `config` blocks and config variables in `antelope.config.ts`
+- [Configuration and multiple accounts](./docs/1.configuration.md)
+- [Payments and retry safety](./docs/2.payments.md)
+- [Webhook routes, signatures and event types](./docs/3.webhooks.md)
+- [Stripe-native subscriptions and generic fallback](./docs/4.subscriptions.md)
+- [Legacy Stripe SDK and watchers](./docs/5.legacy-stripe.md)
+- [Agent skill: integrating Stripe checkout](./skills/integrating-stripe-checkout/SKILL.md)
 
 ## Compatibility
 
-| Package                        | Supported range  |
-| ------------------------------ | ---------------- |
-| `@antelopejs/interface-stripe` | `>=0.0.4 <1.0.0` |
-| `@antelopejs/interface-api`    | `>=0.0.5 <1.0.0` |
-| `@antelopejs/interface-redis`  | `>=0.0.6 <1.0.0` |
-| `@antelopejs/interface-core`   | `>=0.0.5 <1.0.0` |
+<!-- docs-compat: ./package.json#dependencies -->
 
-The module is developed against `@antelopejs/core` `^1.13.4` on Node.js 24, with `stripe` `^18.5.0`.
+| Package                               | Range            |
+| ------------------------------------- | ---------------- |
+| `@antelopejs/interface-core`          | `>=0.2.4 <1.0.0` |
+| `@antelopejs/interface-stripe`        | `>=0.0.6 <0.1.0` |
+| `@antelopejs/interface-payment`       | `>=0.0.2 <0.1.0` |
+| `@antelopejs/interface-subscriptions` | `>=0.0.2 <0.1.0` |
 
-## Contributing
+<!-- docs-compat: ./package.json#optionalDependencies -->
+
+| Package                       | Range             |
+| ----------------------------- | ----------------- |
+| `@antelopejs/interface-api`   | `>=0.0.15 <1.0.0` |
+| `@antelopejs/interface-redis` | `>=0.0.9 <1.0.0`  |
+
+These are the manifest's interface requirements, not claims about released availability. Development targets `@antelopejs/core` 1.16.0 on Node.js 24 and uses `stripe` `^18.5.0`.
+
+## Contributing and verification
+
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request. Run the local checks with pnpm:
 
 ```bash
 pnpm install
+pnpm test
+pnpm typecheck
 pnpm lint
 pnpm format:check
-pnpm typecheck
 pnpm knip
 ```
 
-The module has no automated tests yet: `pnpm test` only prints a message. Read the [contribution guidelines](CONTRIBUTING.md) before opening a pull request.
+`pnpm test` builds, then runs `ajs module test .` with the explicit offline files `dist/test/provider-regressions.test.js`, `dist/test/webhook-events.test.js` and `dist/test/interface-stripe.test.js`. It uses mocked Stripe transport and signed fixtures, not a real Stripe account.
+
+`pnpm test:stripe` builds, then runs `ANTELOPE_STRIPE_TEST_MODE=live ajs module test .`. It requires a locally supplied `STRIPE_KEY` beginning with `sk_test_`, refuses CI and can create test-mode Stripe resources. Run it explicitly before release; offline success is not live verification.
 
 ## License
 
-[Apache-2.0](LICENSE)
+[Apache-2.0](./LICENSE)

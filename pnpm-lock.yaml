@@ -8,18 +8,18 @@ importers:
 
   .:
     dependencies:
-      '@antelopejs/interface-api':
-        specifier: '>=0.0.15 <1.0.0'
-        version: 0.0.15(@antelopejs/interface-core@0.2.4)
       '@antelopejs/interface-core':
         specifier: '>=0.2.4 <1.0.0'
         version: 0.2.4
-      '@antelopejs/interface-redis':
-        specifier: '>=0.0.9 <1.0.0'
-        version: 0.0.9(@antelopejs/interface-core@0.2.4)
+      '@antelopejs/interface-payment':
+        specifier: '>=0.0.2 <0.1.0'
+        version: 0.0.2(@antelopejs/interface-core@0.2.4)
       '@antelopejs/interface-stripe':
-        specifier: '>=0.0.6 <1.0.0'
+        specifier: '>=0.0.6 <0.1.0'
         version: 0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)
+      '@antelopejs/interface-subscriptions':
+        specifier: '>=0.0.2 <0.1.0'
+        version: 0.0.2(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.0.2(@antelopejs/interface-core@0.2.4))
       stripe:
         specifier: ^18.5.0
         version: 18.5.0(@types/node@22.19.15)
@@ -33,6 +33,9 @@ importers:
       '@antelopejs/tooling-configs':
         specifier: ^0.0.9
         version: 0.0.9(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))
+      '@types/mocha':
+        specifier: ^10.0.10
+        version: 10.0.10
       '@types/node':
         specifier: ^22.19.15
         version: 22.19.15
@@ -66,6 +69,13 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+    optionalDependencies:
+      '@antelopejs/interface-api':
+        specifier: '>=0.0.15 <1.0.0'
+        version: 0.0.15(@antelopejs/interface-core@0.2.4)
+      '@antelopejs/interface-redis':
+        specifier: '>=0.0.9 <1.0.0'
+        version: 0.0.9(@antelopejs/interface-core@0.2.4)
 
 packages:
 
@@ -82,6 +92,11 @@ packages:
   '@antelopejs/interface-core@0.2.4':
     resolution: {integrity: sha512-2qF6/KwahCQvvNuC/piUvPWD4wq2Npmco941HMg2/bMBoJKbhMH16WcXXRvPYznNSkU0U+6vqK6KE+2N5NojSA==}
 
+  '@antelopejs/interface-payment@0.0.2':
+    resolution: {integrity: sha512-U72ATKewYgs628xT5MVO70IutcVXGOpw8Vnb7iUh3wjOLLn3pK13RR5rMrMuSnBbIzhltvFpBT4f4rjSDArHSw==}
+    peerDependencies:
+      '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
+
   '@antelopejs/interface-redis@0.0.9':
     resolution: {integrity: sha512-lI1zcm2J13tP4D/QKmsdKFBRIzjZ/GdG4z27uaOp/3yKPA3RkH5YgpzFm9pgBa353UIhgZDuVkozFJcFkqewUA==}
     peerDependencies:
@@ -91,6 +106,12 @@ packages:
     resolution: {integrity: sha512-mJ4JQMGAxjlpJSgnJWgZYPcP/pFCGGIAylc/H+kuKGAgxuuJ3akmGjy442cf6D39OvSz4K8rYvw6RbCVX6pfTg==}
     peerDependencies:
       '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
+
+  '@antelopejs/interface-subscriptions@0.0.2':
+    resolution: {integrity: sha512-ineU+bO4dpeP7nv52mV+klnTzUNmzktXPF/y6PQ3T0KqTOg1awl2OWkOnN4ULvOCvih3SG/zor/QOWWLPhQriw==}
+    peerDependencies:
+      '@antelopejs/interface-core': '>=0.0.5 <1.0.0'
+      '@antelopejs/interface-payment': '>=0.0.2 <1.0.0'
 
   '@antelopejs/tooling-configs@0.0.9':
     resolution: {integrity: sha512-ceAS76KVZ1zDbXldNg/6cVDA9Xsh5FCG4WQgt51W0aJbv9XvpNDVuS53QCIyDL8Pwj0QaCCuK3a4p/QSAgCdDg==}
@@ -895,6 +916,9 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@types/mocha@10.0.10':
+    resolution: {integrity: sha512-xPyYSz1cMPnJQhl0CLMH68j3gprKZaTjG3s5Vi+fDgx+uhG9NOXwbVt52eFS8ECyXhyKcjDLCBEqBExKuiZb7Q==}
 
   '@types/node@22.19.15':
     resolution: {integrity: sha512-F0R/h2+dsy5wJAUe3tAU6oqa2qbWY5TpNfL/RGmo1y38hiyO1w3x2jPtt76wmuaJI4DQnOBu21cNXQ2STIUUWg==}
@@ -2587,10 +2611,15 @@ snapshots:
   '@antelopejs/interface-api@0.0.15(@antelopejs/interface-core@0.2.4)':
     dependencies:
       '@antelopejs/interface-core': 0.2.4
+    optional: true
 
   '@antelopejs/interface-core@0.2.4':
     dependencies:
       reflect-metadata: 0.2.2
+
+  '@antelopejs/interface-payment@0.0.2(@antelopejs/interface-core@0.2.4)':
+    dependencies:
+      '@antelopejs/interface-core': 0.2.4
 
   '@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.2.4)':
     dependencies:
@@ -2598,6 +2627,7 @@ snapshots:
       ioredis: 5.10.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@antelopejs/interface-stripe@0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)':
     dependencies:
@@ -2605,6 +2635,11 @@ snapshots:
       stripe: 18.5.0(@types/node@22.19.15)
     transitivePeerDependencies:
       - '@types/node'
+
+  '@antelopejs/interface-subscriptions@0.0.2(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.0.2(@antelopejs/interface-core@0.2.4))':
+    dependencies:
+      '@antelopejs/interface-core': 0.2.4
+      '@antelopejs/interface-payment': 0.0.2(@antelopejs/interface-core@0.2.4)
 
   '@antelopejs/tooling-configs@0.0.9(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))':
     dependencies:
@@ -2826,7 +2861,8 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.19.15
 
-  '@ioredis/commands@1.5.1': {}
+  '@ioredis/commands@1.5.1':
+    optional: true
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -3191,6 +3227,8 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
+  '@types/mocha@10.0.10': {}
+
   '@types/node@22.19.15':
     dependencies:
       undici-types: 6.21.0
@@ -3498,7 +3536,8 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  cluster-key-slot@1.1.2: {}
+  cluster-key-slot@1.1.2:
+    optional: true
 
   color-convert@2.0.1:
     dependencies:
@@ -3561,7 +3600,8 @@ snapshots:
       escodegen: 2.1.0
       esprima: 4.0.1
 
-  denque@2.1.0: {}
+  denque@2.1.0:
+    optional: true
 
   destr@2.0.5: {}
 
@@ -3982,6 +4022,7 @@ snapshots:
       standard-as-callback: 2.1.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   ip-address@10.1.0: {}
 
@@ -4107,11 +4148,13 @@ snapshots:
 
   lodash.capitalize@4.2.1: {}
 
-  lodash.defaults@4.2.0: {}
+  lodash.defaults@4.2.0:
+    optional: true
 
   lodash.escaperegexp@4.1.2: {}
 
-  lodash.isarguments@3.1.0: {}
+  lodash.isarguments@3.1.0:
+    optional: true
 
   lodash.isplainobject@4.0.6: {}
 
@@ -4613,11 +4656,13 @@ snapshots:
 
   readdirp@5.0.0: {}
 
-  redis-errors@1.2.0: {}
+  redis-errors@1.2.0:
+    optional: true
 
   redis-parser@3.0.0:
     dependencies:
       redis-errors: 1.2.0
+    optional: true
 
   reflect-metadata@0.2.2: {}
 
@@ -4765,7 +4810,8 @@ snapshots:
   source-map@0.6.1:
     optional: true
 
-  standard-as-callback@2.1.0: {}
+  standard-as-callback@2.1.0:
+    optional: true
 
   std-env@3.10.0: {}
 

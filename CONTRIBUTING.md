@@ -6,8 +6,8 @@ Thank you for helping improve AntelopeJS.
 
 - Search existing issues and discussions before opening a new one.
 - Use an issue to discuss substantial features or behavior changes first.
-- Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
-- Follow our [Code of Conduct](CODE_OF_CONDUCT.md).
+- Report vulnerabilities privately as described in the [security policy](https://github.com/AntelopeJS/.github/blob/main/SECURITY.md).
+- Follow our [Code of Conduct](https://github.com/AntelopeJS/.github/blob/main/CODE_OF_CONDUCT.md).
 
 ## Development
 
