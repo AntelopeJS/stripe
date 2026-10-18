@@ -3,6 +3,7 @@ import { mock } from "node:test";
 import assert from "node:assert/strict";
 import {
   InvalidSubscriptionRequestError,
+  SubscriptionError,
   SubscriptionPaymentError,
   type SubscriptionRequest,
 } from "@antelopejs/interface-subscriptions";
@@ -225,6 +226,16 @@ describe("[stripe] provider boundary regressions without credentials", () => {
 
   it("preserves the specific decline code, falling back to the generic code", async () => {
     fixture.shouldDecline = true;
+    fixture.chargeUnavailable = true;
+    await assert.rejects(
+      CreateSubscription(REQUEST, "declined", PROVIDER),
+      (error: unknown) => {
+        assert.ok(error instanceof SubscriptionError);
+        assert.equal(error.message, "unavailable");
+        return true;
+      },
+    );
+    fixture.chargeUnavailable = false;
     await assert.rejects(
       CreateSubscription(REQUEST, "declined", PROVIDER),
       (error: unknown) => {

@@ -114,7 +114,9 @@ export async function CreateSubscription(
     );
     return ToSubscription(created);
   } catch (error) {
-    const declined = await declinedPayment(client, error);
+    const declined = await TranslatingSubscription(request.customer, () =>
+      declinedPayment(client, error),
+    );
     if (declined && error instanceof Stripe.errors.StripeCardError) {
       throw new SubscriptionPaymentError(
         declined,
