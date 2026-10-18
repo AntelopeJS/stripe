@@ -1,0 +1,6 @@
+[submodule ".ci/dependencies/interface-payment"]
+	path = .ci/dependencies/interface-payment
+	url = https://github.com/AntelopeJS/interface-payment.git
+[submodule ".ci/dependencies/interface-subscriptions"]
+	path = .ci/dependencies/interface-subscriptions
+	url = https://github.com/AntelopeJS/interface-subscriptions.git

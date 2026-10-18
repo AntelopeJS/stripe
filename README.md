@@ -89,13 +89,18 @@ These are the manifest's interface requirements, not claims about released avail
 Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request. Run the local checks with pnpm:
 
 ```bash
-pnpm install
+git submodule update --init
+pnpm install --frozen-lockfile
+pnpm --filter @antelopejs/interface-payment build
+pnpm --filter @antelopejs/interface-subscriptions build
 pnpm test
 pnpm typecheck
 pnpm lint
 pnpm format:check
 pnpm knip
 ```
+
+Until the interfaces are published, Git submodules pin their reviewed source commits and the pnpm workspace resolves them locally. CI uses the same frozen lockfile; no private Git credentials or Stripe key are required. The published manifest retains npm version ranges. Before releasing this provider, publish both interfaces, remove the source submodules and workspace overrides, regenerate the standalone lockfile, and rerun CI against the published packages.
 
 `pnpm test` builds, then runs `ajs module test .` with the explicit offline files `dist/test/provider-regressions.test.js`, `dist/test/webhook-events.test.js` and `dist/test/interface-stripe.test.js`. It uses mocked Stripe transport and signed fixtures, not a real Stripe account.
 

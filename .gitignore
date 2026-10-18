@@ -369,3 +369,6 @@ $RECYCLE.BIN/
 .pnpm-store
 
 .idea
+
+# Dependency submodules are pinned by Git, not formatted as first-party code.
+.ci/dependencies/
