@@ -1,0 +1,15 @@
+{
+  "rules": {
+    "antelopejs/no-comments": 1,
+    "anti-slop/no-chained-type-assertions": 2,
+    "anti-slop/no-conditional-empty-object-spread": 30,
+    "anti-slop/no-known-value-widening": 18,
+    "anti-slop/no-runtime-typeof": 17,
+    "anti-slop/no-unknown-parameters": 22,
+    "anti-slop/no-unknown-returns": 2,
+    "anti-slop/no-unsafe-dictionary-type": 3,
+    "anti-slop/require-safety-comment-for-type-assertion": 24,
+    "typescript/await-thenable": 1
+  },
+  "oversizeFiles": {}
+}
