@@ -15,7 +15,7 @@ The interface packages and `@antelopejs/interface-core` are dependencies with ca
 
 ## Shipped files
 
-`docs/` and `skills/` ship in the npm package; `dist/test` does not. `docs/` holds the guides the package `homepage` (https://interfaces.antelopejs.com/docs/stripe/introduction) points to. `skills/` reaches users through `antelopeJs.skills`; when checkout, payment or webhook behaviour changes, update `skills/integrating-stripe-checkout`.
+`docs/` and `skills/` ship in the npm package; `dist/test` does not. `docs/` holds the provider guides that `README.md` links to. `skills/` reaches users through `antelopeJs.skills`; when checkout, payment or webhook behaviour changes, update `skills/integrating-stripe-checkout`.
 
 <!-- antelopejs-guardrails:start -->
 <!-- Managed by @antelopejs/tooling-configs. `antelopejs-sync` rewrites everything between these markers; write repository-specific guidance outside them. -->
