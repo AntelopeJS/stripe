@@ -10,12 +10,12 @@ The interface packages and `@antelopejs/interface-core` are dependencies with ca
 
 - Suites are written in `src/test` and compiled to `dist/test`. `src/test/antelope.test.ts` (`antelopeJs.test` in `package.json`) is the `ajs module test` project; it loads this module from `.` with an offline Stripe client that answers only `/v1/invoice_payments`.
 - `pnpm test`, and so `pnpm run checks`, builds `dist` and runs only the offline suites it names with `-f`: `provider-regressions`, `webhook-events` and `interface-stripe`. Add a new offline suite to that list, or it never runs.
-- The other suites (the shared payment and subscriptions conformance suites, error mapping, test clocks, subscription events and ownership, payment-method listing) call real Stripe. Run them with `STRIPE_KEY=sk_test_... pnpm test:stripe`. They refuse a key that is not test-mode, and they refuse to run when `CI` is set, so CI never runs them.
+- The other suites (the shared payment and subscriptions conformance suites, test clocks, subscription events and ownership, payment-method listing) call real Stripe. Run them with `STRIPE_KEY=sk_test_... pnpm test:stripe`. `error-mapping.test.ts` mixes offline `TranslateError` tests with live rejection tests, so its offline part also runs only under `pnpm test:stripe`. They refuse a key that is not test-mode, and they refuse to run when `CI` is set, so CI never runs them.
 - `pnpm run checks` does not run the documentation check. CI runs it through the `docs-files` inputs in `.github/workflows/ci.yml`. To run it locally, clone `AntelopeJS/tooling-configs` at `v0.0.9` (the ref ci-node pins), run `npm ci --prefix actions/docs --omit=dev`, then run `node <clone>/actions/docs/check.mjs --files "$(printf 'README.md\ndocs')" --typescript-project docs/tsconfig.json` from this repository.
 
 ## Shipped files
 
-`docs/` and `skills/` ship in the npm package; `dist/test` does not. `docs/` holds the guides the package `homepage` (interfaces.antelopejs.com/docs/stripe) points to. `skills/` reaches users through `antelopeJs.skills`; when checkout, payment or webhook behaviour changes, update `skills/integrating-stripe-checkout`.
+`docs/` and `skills/` ship in the npm package; `dist/test` does not. `docs/` holds the guides the package `homepage` (https://interfaces.antelopejs.com/docs/stripe/introduction) points to. `skills/` reaches users through `antelopeJs.skills`; when checkout, payment or webhook behaviour changes, update `skills/integrating-stripe-checkout`.
 
 <!-- antelopejs-guardrails:start -->
 <!-- Managed by @antelopejs/tooling-configs. `antelopejs-sync` rewrites everything between these markers; write repository-specific guidance outside them. -->
