@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch: null
 
 permissions:
   contents: read
@@ -16,6 +17,9 @@ jobs:
         README.md
         docs
       docs-typescript-project: docs/tsconfig.json
+    permissions:
+      contents: write
+      actions: write
 
   checks:
     if: always()
