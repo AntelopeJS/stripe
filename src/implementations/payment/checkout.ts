@@ -14,7 +14,7 @@ const SESSION_ENTITY = { entity: "checkout session" as const };
 const OPEN = "open";
 const EXPAND_INTENT = ["payment_intent"];
 
-// Stripe 18's types predate this supported Checkout parameter.
+/** Checkout parameters including `managed_payments`, which Stripe 18's types predate. */
 interface StandardCheckoutParams extends Stripe.Checkout.SessionCreateParams {
   managed_payments: { enabled: false };
 }
