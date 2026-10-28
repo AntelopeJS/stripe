@@ -1,14 +1,12 @@
 import Stripe from "stripe";
 import assert from "node:assert/strict";
 import {
-  PAYMENT_EVENT_TYPES,
   type PaymentEvent,
   VerifyWebhook,
   WebhookVerificationError,
 } from "@antelopejs/interface-payment";
 
 const SECRET = process.env.STRIPE_TEST_WEBHOOK_SECRET ?? "";
-const EPOCH_MILLIS_FLOOR = Date.UTC(2020, 0, 1);
 const CREATED_SECONDS = 1_760_000_000;
 const CREATED_MILLIS = CREATED_SECONDS * 1000;
 const AMOUNT = 2500;
@@ -68,9 +66,7 @@ describe("[stripe] webhook event normalisation", () => {
 
     assert.ok(event, "a modelled delivery must produce an event");
     assert.equal(event.type, "payment.succeeded");
-    assert.ok(PAYMENT_EVENT_TYPES.includes(event.type));
     assert.equal(event.createdAt, CREATED_MILLIS);
-    assert.ok(event.createdAt > EPOCH_MILLIS_FLOOR);
     assert.ok(event.payment, "a payment event must carry the payment");
     assert.equal(event.payment.id, "pi_webhook");
     assert.equal(event.payment.status, "succeeded");

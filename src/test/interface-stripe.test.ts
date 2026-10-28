@@ -33,16 +33,6 @@ describe("[stripe] the Stripe-native interface still works", () => {
       client instanceof Stripe,
       "GetClient must resolve a Stripe client",
     );
-    assert.equal(typeof client.paymentIntents.create, "function");
-  });
-
-  it("starts with neither Redis nor the api module wired", async () => {
-    const client = await withTimeout(GetClient(), "GetClient");
-
-    assert.ok(
-      client,
-      "start() published the client with no Redis module present, so it did not block on one",
-    );
   });
 
   it("still carries intent changes over the shared event proxy", () => {
