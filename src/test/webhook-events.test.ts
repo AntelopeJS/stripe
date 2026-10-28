@@ -6,6 +6,8 @@ import {
   WebhookVerificationError,
 } from "@antelopejs/interface-payment";
 
+import type { WireObject } from "./wire";
+
 const SECRET = process.env.STRIPE_TEST_WEBHOOK_SECRET ?? "";
 const CREATED_SECONDS = 1_760_000_000;
 const CREATED_MILLIS = CREATED_SECONDS * 1000;
@@ -13,13 +15,11 @@ const AMOUNT = 2500;
 const CAPTURED = 1000;
 const REFUNDED = 700;
 
-const signer = new Stripe("sk_test_unused_for_signing_only", {
-  apiVersion: undefined as unknown as Stripe.LatestApiVersion,
-});
+const signer = new Stripe("sk_test_unused_for_signing_only");
 
 function deliver(
   type: string,
-  object: unknown,
+  object: Stripe.Event.Data.Object,
 ): Promise<PaymentEvent | undefined> {
   const payload = JSON.stringify({
     id: `evt_${type.replace(/\W/g, "_")}`,
@@ -38,7 +38,7 @@ function deliver(
   });
 }
 
-function intent(overrides: Record<string, unknown>): Record<string, unknown> {
+function intent(overrides: WireObject) {
   return {
     id: "pi_webhook",
     object: "payment_intent",

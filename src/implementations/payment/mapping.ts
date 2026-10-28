@@ -14,12 +14,14 @@ import type {
   RefundStatus,
 } from "@antelopejs/interface-payment";
 
+import { Expanded, IsStripeId, Lookup } from "../fields";
+
 /** Metadata key the caller's own reference is round-tripped through. */
 export const REFERENCE_KEY = "antelope_reference";
 
 const MILLIS_PER_SECOND = 1000;
 
-const STATUS_BY_INTENT_STATUS: Record<string, PaymentStatus> = {
+const STATUS_BY_INTENT_STATUS = {
   canceled: "canceled",
   processing: "pending",
   requires_action: "requires_action",
@@ -27,9 +29,9 @@ const STATUS_BY_INTENT_STATUS: Record<string, PaymentStatus> = {
   requires_confirmation: "pending",
   requires_payment_method: "pending",
   succeeded: "succeeded",
-};
+} satisfies Record<Stripe.PaymentIntent.Status, PaymentStatus>;
 
-const FAILURE_BY_DECLINE_CODE: Record<string, PaymentFailureCode> = {
+const FAILURE_BY_DECLINE_CODE = {
   authentication_required: "authentication_failed",
   expired_card: "expired_card",
   incorrect_cvc: "incorrect_details",
@@ -37,32 +39,32 @@ const FAILURE_BY_DECLINE_CODE: Record<string, PaymentFailureCode> = {
   insufficient_funds: "insufficient_funds",
   invalid_expiry_month: "incorrect_details",
   invalid_expiry_year: "incorrect_details",
-};
+} satisfies Record<string, PaymentFailureCode>;
 
-const FAILURE_BY_CODE: Record<string, PaymentFailureCode> = {
+const FAILURE_BY_CODE = {
   card_declined: "declined",
   expired_card: "expired_card",
   incorrect_cvc: "incorrect_details",
   incorrect_number: "incorrect_details",
   payment_intent_authentication_failure: "authentication_failed",
   processing_error: "processing_error",
-};
+} satisfies Record<string, PaymentFailureCode>;
 
-const REFUND_STATUS_BY_STRIPE: Record<string, RefundStatus> = {
+const REFUND_STATUS_BY_STRIPE = {
   canceled: "failed",
   failed: "failed",
   pending: "pending",
   requires_action: "pending",
   succeeded: "succeeded",
-};
+} satisfies Record<string, RefundStatus>;
 
-const METHOD_TYPE_BY_STRIPE: Record<string, PaymentMethodType> = {
+const METHOD_TYPE_BY_STRIPE = {
   card: "card",
   link: "wallet",
   paypal: "wallet",
   sepa_debit: "bank_account",
   us_bank_account: "bank_account",
-};
+} satisfies Partial<Record<Stripe.PaymentMethod.Type, PaymentMethodType>>;
 
 function ToMinorUnits(value: number, currency: string): Amount {
   return { value, currency: currency.toUpperCase() };
@@ -70,10 +72,6 @@ function ToMinorUnits(value: number, currency: string): Amount {
 
 export function ToEpochMillis(seconds: number): number {
   return seconds * MILLIS_PER_SECOND;
-}
-
-function expanded<T extends object>(field: string | T | null): T | undefined {
-  return field && typeof field !== "string" ? field : undefined;
 }
 
 interface PaymentMetadata {
@@ -114,7 +112,7 @@ export function ToPaymentStatus(intent: Stripe.PaymentIntent): PaymentStatus {
   ) {
     return "failed";
   }
-  return STATUS_BY_INTENT_STATUS[intent.status] ?? "pending";
+  return Lookup(STATUS_BY_INTENT_STATUS, intent.status) ?? "pending";
 }
 
 function ToFailure(
@@ -124,8 +122,8 @@ function ToFailure(
     return undefined;
   }
   const code =
-    FAILURE_BY_DECLINE_CODE[error.decline_code ?? ""] ??
-    FAILURE_BY_CODE[error.code ?? ""] ??
+    Lookup(FAILURE_BY_DECLINE_CODE, error.decline_code ?? "") ??
+    Lookup(FAILURE_BY_CODE, error.code ?? "") ??
     "declined";
   return {
     code,
@@ -153,7 +151,7 @@ function redirectUrl(intent: Stripe.PaymentIntent): string {
 }
 
 function refundedTotal(intent: Stripe.PaymentIntent): number {
-  return expanded<Stripe.Charge>(intent.latest_charge)?.amount_refunded ?? 0;
+  return Expanded<Stripe.Charge>(intent.latest_charge)?.amount_refunded ?? 0;
 }
 
 /**
@@ -163,7 +161,7 @@ function refundedTotal(intent: Stripe.PaymentIntent): number {
 export function ToPayment(intent: Stripe.PaymentIntent): Payment {
   const status = ToPaymentStatus(intent);
   const { reference, metadata } = ReadMetadata(intent.metadata);
-  return {
+  const payment: Payment = {
     id: intent.id,
     amount: ToMinorUnits(intent.amount, intent.currency),
     amountCaptured: ToMinorUnits(intent.amount_received, intent.currency),
@@ -171,49 +169,45 @@ export function ToPayment(intent: Stripe.PaymentIntent): Payment {
     status,
     reference,
     createdAt: ToEpochMillis(intent.created),
-    ...(typeof intent.customer === "string"
-      ? { customer: intent.customer }
-      : {}),
-    ...(typeof intent.payment_method === "string"
-      ? { paymentMethod: intent.payment_method }
-      : {}),
-    ...(status === "requires_action"
-      ? { redirectUrl: redirectUrl(intent) }
-      : {}),
-    ...(status === "failed"
-      ? { failure: ToFailure(intent.last_payment_error ?? undefined) }
-      : {}),
-    ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
   };
+  if (IsStripeId(intent.customer)) payment.customer = intent.customer;
+  if (IsStripeId(intent.payment_method)) {
+    payment.paymentMethod = intent.payment_method;
+  }
+  if (status === "requires_action") payment.redirectUrl = redirectUrl(intent);
+  if (status === "failed") {
+    payment.failure = ToFailure(intent.last_payment_error ?? undefined);
+  }
+  if (Object.keys(metadata).length > 0) payment.metadata = metadata;
+  return payment;
+}
+
+function refundFailure(refund: Stripe.Refund): PaymentFailure {
+  const failure: PaymentFailure = {
+    code: "processing_error",
+    message: refund.failure_reason ?? "The refund failed",
+  };
+  if (refund.failure_reason) failure.providerCode = refund.failure_reason;
+  return failure;
 }
 
 export function ToRefund(refund: Stripe.Refund): Refund {
   const { metadata } = ReadMetadata(refund.metadata);
   const status =
-    REFUND_STATUS_BY_STRIPE[refund.status ?? "pending"] ?? "pending";
-  const intent =
-    typeof refund.payment_intent === "string"
-      ? refund.payment_intent
-      : (refund.payment_intent?.id ?? "");
-  return {
+    Lookup(REFUND_STATUS_BY_STRIPE, refund.status ?? "pending") ?? "pending";
+  const intent = IsStripeId(refund.payment_intent)
+    ? refund.payment_intent
+    : (refund.payment_intent?.id ?? "");
+  const result: Refund = {
     id: refund.id,
     payment: intent,
     amount: ToMinorUnits(refund.amount, refund.currency),
     status,
     createdAt: ToEpochMillis(refund.created),
-    ...(status === "failed"
-      ? {
-          failure: {
-            code: "processing_error" as PaymentFailureCode,
-            message: refund.failure_reason ?? "The refund failed",
-            ...(refund.failure_reason
-              ? { providerCode: refund.failure_reason }
-              : {}),
-          },
-        }
-      : {}),
-    ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
   };
+  if (status === "failed") result.failure = refundFailure(refund);
+  if (Object.keys(metadata).length > 0) result.metadata = metadata;
+  return result;
 }
 
 function toCard(
@@ -232,25 +226,26 @@ function toCard(
 
 export function ToPaymentMethod(method: Stripe.PaymentMethod): PaymentMethod {
   const card = toCard(method.card);
-  return {
+  const result: PaymentMethod = {
     id: method.id,
-    type: METHOD_TYPE_BY_STRIPE[method.type] ?? "other",
-    customer: typeof method.customer === "string" ? method.customer : "",
+    type: Lookup(METHOD_TYPE_BY_STRIPE, method.type) ?? "other",
+    customer: IsStripeId(method.customer) ? method.customer : "",
     createdAt: ToEpochMillis(method.created),
-    ...(card ? { card } : {}),
   };
+  if (card) result.card = card;
+  return result;
 }
 
 export function ToDispute(dispute: Stripe.Dispute): Dispute {
-  const intent =
-    typeof dispute.payment_intent === "string"
-      ? dispute.payment_intent
-      : (dispute.payment_intent?.id ?? "");
-  return {
+  const intent = IsStripeId(dispute.payment_intent)
+    ? dispute.payment_intent
+    : (dispute.payment_intent?.id ?? "");
+  const result: Dispute = {
     id: dispute.id,
     payment: intent,
     amount: ToMinorUnits(dispute.amount, dispute.currency),
     createdAt: ToEpochMillis(dispute.created),
-    ...(dispute.reason ? { reason: dispute.reason } : {}),
   };
+  if (dispute.reason) result.reason = dispute.reason;
+  return result;
 }

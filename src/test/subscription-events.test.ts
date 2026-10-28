@@ -17,6 +17,7 @@ import {
 } from "@antelopejs/interface-subscriptions";
 
 import { DeliverWebhook as deliver } from "./signed-webhook";
+import { IsStripeId } from "../implementations/fields";
 
 const SUITE_TIMEOUT = 120_000;
 const SECOND_MS = 1000;
@@ -68,7 +69,8 @@ async function rawSubscription(id: string): Promise<Stripe.Subscription> {
 
 async function rawInvoice(subscription: string): Promise<Stripe.Invoice> {
   const { latest_invoice } = await rawSubscription(subscription);
-  return client.invoices.retrieve(latest_invoice as string);
+  assert.ok(IsStripeId(latest_invoice), "the subscription has an invoice");
+  return client.invoices.retrieve(latest_invoice);
 }
 
 describe("[stripe] subscription events from webhooks", function () {

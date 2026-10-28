@@ -11,10 +11,13 @@ import {
   SUBSCRIPTION_METADATA_KEY,
   type Subscription,
   type SubscriptionEvent,
+  type SubscriptionRequest,
   SubscriptionEvents,
   SubscriptionPaymentError,
   UpdateSubscriptionPaymentMethod,
 } from "@antelopejs/interface-subscriptions";
+
+import { IsStripeId } from "../implementations/fields";
 
 const SUITE_TIMEOUT = 600_000;
 const CLOCK_READY_TIMEOUT = 180_000;
@@ -76,7 +79,7 @@ async function advance(clock: string, to: number): Promise<void> {
 
 function subscribe(
   payer: ClockPayer,
-  overrides: Record<string, unknown> = {},
+  overrides: Partial<SubscriptionRequest> = {},
 ): Promise<Subscription> {
   return CreateSubscription(
     {
@@ -97,7 +100,7 @@ function pastPeriodEnd(subscription: Subscription): number {
 
 async function deliverAndCollect(
   type: string,
-  object: unknown,
+  object: Stripe.Event.Data.Object,
 ): Promise<SubscriptionEvent[]> {
   const collected: SubscriptionEvent[] = [];
   const handler = `stripe-clock-${randomUUID()}`;
@@ -177,10 +180,9 @@ describe("[stripe] subscriptions on a test clock", function () {
     assert.equal(failed.status, "past_due");
     assert.equal(failed.currentPeriodStart, created.currentPeriodEnd);
 
-    const invoice = await client.invoices.retrieve(
-      (await client.subscriptions.retrieve(created.id))
-        .latest_invoice as string,
-    );
+    const { latest_invoice } = await client.subscriptions.retrieve(created.id);
+    assert.ok(IsStripeId(latest_invoice), "the subscription has an invoice");
+    const invoice = await client.invoices.retrieve(latest_invoice);
     const [event] = await deliverAndCollect("invoice.payment_failed", invoice);
     assert.equal(event?.type, "subscription.payment_failed");
     assert.equal(event?.subscription.id, created.id);
@@ -216,11 +218,14 @@ describe("[stripe] a declined first period", function () {
       interval: "month" as const,
     };
     const idempotencyKey = key();
-    const refuse = () =>
-      CreateSubscription(request, idempotencyKey).then(
-        () => assert.fail("a declined first period must not create anything"),
-        (error: unknown) => error,
-      );
+    const refuse = async () => {
+      try {
+        await CreateSubscription(request, idempotencyKey);
+      } catch (error) {
+        return error;
+      }
+      return assert.fail("a declined first period must not create anything");
+    };
 
     const first = await refuse();
     assert.ok(first instanceof SubscriptionPaymentError, String(first));

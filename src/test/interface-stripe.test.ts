@@ -5,8 +5,11 @@ import {
   internal as stripeInternal,
 } from "@antelopejs/interface-stripe";
 
+import { SignedEvent } from "./signed-webhook";
+
 const RESOLVE_TIMEOUT = 5_000;
 const WATCHED_INTENT = "pi_watch";
+const LOCAL_SECRET = "whsec_interface_stripe_local";
 
 function withTimeout<T>(work: Promise<T>, label: string): Promise<T> {
   return Promise.race([
@@ -36,6 +39,17 @@ describe("[stripe] the Stripe-native interface still works", () => {
   });
 
   it("still carries intent changes over the shared event proxy", () => {
+    const event = SignedEvent(
+      "payment_intent.succeeded",
+      {
+        id: WATCHED_INTENT,
+        object: "payment_intent",
+        status: "succeeded",
+        metadata: { payload: "order-7" },
+      },
+      LOCAL_SECRET,
+    );
+    assert.ok(event.type === "payment_intent.succeeded");
     const seen: string[] = [];
     const handler = (intent: Stripe.PaymentIntent) => {
       seen.push(intent.id);
@@ -43,14 +57,7 @@ describe("[stripe] the Stripe-native interface still works", () => {
     stripeInternal.intentChanges.register(handler);
 
     try {
-      stripeInternal.intentChanges.emit(
-        {
-          id: WATCHED_INTENT,
-          status: "succeeded",
-          metadata: { payload: "order-7" },
-        } as unknown as Stripe.PaymentIntent,
-        { local: true },
-      );
+      stripeInternal.intentChanges.emit(event.data.object, { local: true });
     } finally {
       stripeInternal.intentChanges.unregister(handler);
     }

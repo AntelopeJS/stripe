@@ -38,15 +38,13 @@ function buildParams(
     currency: request.amount.currency.toLowerCase(),
     metadata: WriteMetadata(request.reference, request.metadata),
     confirm: Boolean(request.paymentMethod),
-    ...(request.authorizeOnly ? { capture_method: "manual" as const } : {}),
-    ...(request.paymentMethod ? { payment_method: request.paymentMethod } : {}),
-    ...(request.customer ? { customer: request.customer } : {}),
-    ...(request.description ? { description: request.description } : {}),
-    ...(request.offSession ? { off_session: true } : {}),
-    ...(request.savePaymentMethod
-      ? { setup_future_usage: "off_session" as const }
-      : {}),
   };
+  if (request.authorizeOnly) params.capture_method = "manual";
+  if (request.paymentMethod) params.payment_method = request.paymentMethod;
+  if (request.customer) params.customer = request.customer;
+  if (request.description) params.description = request.description;
+  if (request.offSession) params.off_session = true;
+  if (request.savePaymentMethod) params.setup_future_usage = "off_session";
   if (request.returnUrl) {
     return { ...params, return_url: request.returnUrl };
   }
@@ -62,10 +60,9 @@ function buildParams(
  * `failed`, so that a synchronous decline and one that arrives later by webhook
  * are handled in the same place.
  */
-function declinedPayment(error: unknown): Payment | undefined {
-  if (!(error instanceof Stripe.errors.StripeCardError)) {
-    return undefined;
-  }
+function declinedPayment(
+  error: Stripe.errors.StripeCardError,
+): Payment | undefined {
   const intent = error.payment_intent;
   return intent ? ToPayment(intent) : undefined;
 }
@@ -83,7 +80,10 @@ export async function CreatePayment(
     });
     return ToPayment(intent);
   } catch (error) {
-    const declined = declinedPayment(error);
+    const declined =
+      error instanceof Stripe.errors.StripeCardError
+        ? declinedPayment(error)
+        : undefined;
     if (declined) {
       return declined;
     }
