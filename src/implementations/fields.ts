@@ -17,7 +17,9 @@ export function Lookup<T extends object>(
  * Whether an expandable Stripe field holds the bare identifier rather than the
  * expanded object.
  */
-export function IsStripeId<T>(field: string | T): field is string {
+export function IsStripeId(
+  field: string | { id?: string } | null | undefined,
+): field is string {
   return typeof field === "string";
 }
 
