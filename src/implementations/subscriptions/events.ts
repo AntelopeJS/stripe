@@ -53,6 +53,7 @@ async function PaymentOfInvoice(
 
 function fromSubscription(type: SubscriptionEventType): Builder {
   return async (client, event) => {
+    // SAFETY: fromSubscription is only registered in BUILDERS under customer.subscription.created and customer.subscription.deleted, and Stripe types both events with data.object: Stripe.Subscription.
     const subscription = event.data.object as Stripe.Subscription;
     if (!IsOwnSubscription(subscription.metadata)) return undefined;
     const payment = await PaymentOfInvoice(client, subscription.latest_invoice);
@@ -73,6 +74,7 @@ function subscriptionOf(invoice: Stripe.Invoice): string | undefined {
 
 function fromInvoice(type: SubscriptionEventType): Builder {
   return async (client, event) => {
+    // SAFETY: fromInvoice is only registered in BUILDERS under invoice.paid and invoice.payment_failed, and Stripe types both events with data.object: Stripe.Invoice.
     const invoice = event.data.object as Stripe.Invoice;
     const subscription = subscriptionOf(invoice);
     const isFreePeriod =
