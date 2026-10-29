@@ -18,13 +18,19 @@ async function create(client: Stripe): Promise<string> {
   return PRODUCT_ID;
 }
 
+async function created(client: Stripe): Promise<string> {
+  try {
+    return await create(client);
+  } catch (error) {
+    products.delete(client);
+    throw error;
+  }
+}
+
 export function SubscriptionProduct(client: Stripe): Promise<string> {
   const known = products.get(client);
   if (known) return known;
-  const pending = create(client).catch((error: unknown) => {
-    products.delete(client);
-    throw error;
-  });
+  const pending = created(client);
   products.set(client, pending);
   return pending;
 }

@@ -77,7 +77,7 @@ export async function construct(config: Config): Promise<void> {
   client = new Stripe(stripeConfig.apiKey, options);
   registerAccounts(config, options);
 
-  await ImplementInterface(payment, await import("./implementations/payment"));
+  ImplementInterface(payment, await import("./implementations/payment"));
   ImplementInterface(
     subscriptions,
     await import("./implementations/subscriptions"),
@@ -150,15 +150,11 @@ function handlePaymentIntentChangesMessage(
 
     internalv1.intentChanges.emit(data.paymentIntent, { local: false });
   } catch (error) {
-    reportRedisMessageProcessingError(error);
+    const reason = error instanceof Error ? error.message : String(error);
+    process.stderr.write(
+      `Failed to process payment intent change from Redis: ${reason}\n`,
+    );
   }
-}
-
-function reportRedisMessageProcessingError(error: unknown): void {
-  const reason = error instanceof Error ? error.message : String(error);
-  process.stderr.write(
-    `Failed to process payment intent change from Redis: ${reason}\n`,
-  );
 }
 
 const makeStripeController = (api: ApiModule, path: string) => {
@@ -173,10 +169,7 @@ const makeStripeController = (api: ApiModule, path: string) => {
         .constructEventAsync(body, signature, stripeConfig.webhookSecret)
         .catch(() => Promise.reject(new HTTPResult(403, "Unauthorized")));
 
-      const object = event.data.object as
-        | Stripe.PaymentIntent
-        | Stripe.Source
-        | Stripe.Charge;
+      const object = event.data.object;
 
       if (object.object === "payment_intent") {
         internalv1.intentChanges.emit(object, { local: true });

@@ -35,11 +35,21 @@ export interface ErrorContext {
 
 const CUSTOMER_ENTITIES = new Set<string>(["customer", "payment method"]);
 
-function notFound(id: string, entity: string, code?: string): PaymentError {
-  if (CUSTOMER_ENTITIES.has(entity)) {
-    return new CustomerNotFoundError(id, entity as CustomerEntity, code);
+function isCustomerEntity(
+  entity: PaymentEntity | CustomerEntity,
+): entity is CustomerEntity {
+  return CUSTOMER_ENTITIES.has(entity);
+}
+
+function notFound(
+  id: string,
+  entity: PaymentEntity | CustomerEntity,
+  code?: string,
+): PaymentError {
+  if (isCustomerEntity(entity)) {
+    return new CustomerNotFoundError(id, entity, code);
   }
-  return new PaymentNotFoundError(id, entity as PaymentEntity, code);
+  return new PaymentNotFoundError(id, entity, code);
 }
 
 const INVALID_REQUEST = "invalid_request_error";
@@ -75,11 +85,11 @@ function isState(
  * @param id - The identifier the call was made against, for the message
  * @param context - What a missing resource and an uncoded rejection mean here
  */
-export function TranslateError(
-  error: unknown,
+export function TranslateError<Cause>(
+  error: Cause,
   id: string,
   context: ErrorContext,
-): unknown {
+): Cause | PaymentError {
   if (!(error instanceof Stripe.errors.StripeError)) {
     return error;
   }

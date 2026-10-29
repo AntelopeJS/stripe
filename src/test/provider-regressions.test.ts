@@ -8,7 +8,9 @@ import {
   type SubscriptionRequest,
 } from "@antelopejs/interface-subscriptions";
 
+import type { WireObject } from "./wire";
 import { SignedWebhook } from "./signed-webhook";
+import { Lookup } from "../implementations/fields";
 import { VerifyWebhook } from "../implementations/payment/webhooks";
 import { RegisterAccount } from "../implementations/payment/accounts";
 import { CreateCheckoutSession } from "../implementations/payment/checkout";
@@ -29,11 +31,15 @@ const REQUEST: SubscriptionRequest = {
   interval: "month",
 };
 
-function response(body: unknown, status = 200): Response {
+function response(body: WireObject, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "content-type": "application/json" },
   });
+}
+
+function isText(body: RequestInit["body"]): body is string {
+  return typeof body === "string";
 }
 
 function intent() {
@@ -86,9 +92,9 @@ class ProviderFixture {
     httpClient: Stripe.createFetchHttpClient(
       async (url: string, init?: RequestInit) => {
         const path = new URL(url).pathname;
-        const routes: Record<string, () => Response> = {
+        const routes = {
           "/v1/checkout/sessions": () => {
-            assert.ok(typeof init?.body === "string");
+            assert.ok(isText(init?.body));
             const params = new URLSearchParams(init.body);
             if (params.get("managed_payments[enabled]") !== "false") {
               return response(
@@ -118,8 +124,8 @@ class ProviderFixture {
               latest_charge: null,
             }),
           "/v1/invoice_payments": () => response({ data: [] }),
-        };
-        const route = routes[path];
+        } satisfies Record<string, () => Response>;
+        const route = Lookup(routes, path);
         assert.ok(route, `Unexpected provider request: ${path}`);
         return route();
       },
@@ -144,7 +150,7 @@ class ProviderFixture {
     const key = new Headers(init?.headers).get("idempotency-key") ?? "";
     const previous = this.saved.get(key);
     if (previous) return response(previous);
-    assert.ok(typeof init?.body === "string");
+    assert.ok(isText(init?.body));
     const params = new URLSearchParams(init.body);
     const date = params.get("trial_end") ?? params.get("billing_cycle_anchor");
     if (date && Number(date) * SECOND_MS <= Date.now()) {
@@ -190,7 +196,7 @@ describe("[stripe] provider boundary regressions without credentials", () => {
 
   afterEach(() => mock.restoreAll());
 
-  function deliver(type: string, object: unknown) {
+  function deliver(type: string, object: Stripe.Event.Data.Object) {
     return VerifyWebhook(SignedWebhook(type, object, SECRET), PROVIDER);
   }
 
@@ -267,7 +273,7 @@ describe("[stripe] provider boundary regressions without credentials", () => {
     fixture.chargeUnavailable = true;
     await assert.rejects(
       CreateSubscription(REQUEST, "declined", PROVIDER),
-      (error: unknown) => {
+      (error) => {
         assert.ok(error instanceof SubscriptionError);
         assert.equal(error.message, "unavailable");
         return true;
@@ -276,7 +282,7 @@ describe("[stripe] provider boundary regressions without credentials", () => {
     fixture.chargeUnavailable = false;
     await assert.rejects(
       CreateSubscription(REQUEST, "declined", PROVIDER),
-      (error: unknown) => {
+      (error) => {
         assert.ok(error instanceof SubscriptionPaymentError);
         assert.equal(error.providerCode, "insufficient_funds");
         assert.equal(error.payment.id, "pi_test");
@@ -286,7 +292,7 @@ describe("[stripe] provider boundary regressions without credentials", () => {
     fixture.declineCode = undefined;
     await assert.rejects(
       CreateSubscription(REQUEST, "generic", PROVIDER),
-      (error: unknown) => {
+      (error) => {
         assert.ok(error instanceof SubscriptionPaymentError);
         assert.equal(error.providerCode, "card_declined");
         return true;

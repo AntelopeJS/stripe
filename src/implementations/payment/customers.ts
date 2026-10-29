@@ -1,3 +1,4 @@
+import type Stripe from "stripe";
 import { CustomerNotFoundError } from "@antelopejs/interface-payment";
 import type {
   Customer,
@@ -13,15 +14,22 @@ const CUSTOMER_ENTITY = { entity: "customer" as const };
 const METHOD_ENTITY = { entity: "payment method" as const };
 const METHOD_PAGE_SIZE = 100;
 
-function toCustomer(customer: import("stripe").Stripe.Customer): Customer {
-  return {
-    id: customer.id,
-    ...(customer.email ? { email: customer.email } : {}),
-    ...(customer.name ? { name: customer.name } : {}),
-    ...(customer.metadata && Object.keys(customer.metadata).length > 0
-      ? { metadata: customer.metadata }
-      : {}),
-  };
+function toCustomer(customer: Stripe.Customer): Customer {
+  const result: Customer = { id: customer.id };
+  if (customer.email) result.email = customer.email;
+  if (customer.name) result.name = customer.name;
+  if (customer.metadata && Object.keys(customer.metadata).length > 0) {
+    result.metadata = customer.metadata;
+  }
+  return result;
+}
+
+function customerParams(request: CustomerRequest): Stripe.CustomerCreateParams {
+  const params: Stripe.CustomerCreateParams = {};
+  if (request.email) params.email = request.email;
+  if (request.name) params.name = request.name;
+  if (request.metadata) params.metadata = request.metadata;
+  return params;
 }
 
 export async function CreateCustomer(
@@ -32,14 +40,9 @@ export async function CreateCustomer(
   const { client } = GetAccount(provider);
   return Translating("", CUSTOMER_ENTITY, async () =>
     toCustomer(
-      await client.customers.create(
-        {
-          ...(request.email ? { email: request.email } : {}),
-          ...(request.name ? { name: request.name } : {}),
-          ...(request.metadata ? { metadata: request.metadata } : {}),
-        },
-        { idempotencyKey },
-      ),
+      await client.customers.create(customerParams(request), {
+        idempotencyKey,
+      }),
     ),
   );
 }

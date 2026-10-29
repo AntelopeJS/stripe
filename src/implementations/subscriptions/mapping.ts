@@ -1,10 +1,10 @@
 import Stripe from "stripe";
 import type {
   Subscription,
-  SubscriptionInterval,
   SubscriptionStatus,
 } from "@antelopejs/interface-subscriptions";
 
+import { Expanded, IsStripeId } from "../fields";
 import { REFERENCE_KEY, ReadMetadata, ToEpochMillis } from "../payment/mapping";
 
 const STATUS_BY_STRIPE: Record<Stripe.Subscription.Status, SubscriptionStatus> =
@@ -31,7 +31,7 @@ function firstItem(subscription: Stripe.Subscription): Stripe.SubscriptionItem {
 
 function idOf(field: string | { id: string } | null): string | undefined {
   if (field === null) return undefined;
-  return typeof field === "string" ? field : field.id;
+  return IsStripeId(field) ? field : field.id;
 }
 
 function LatestInvoicePayment(
@@ -46,8 +46,7 @@ function LatestInvoicePayment(
 function latestInvoice(
   subscription: Stripe.Subscription,
 ): Stripe.Invoice | null {
-  const invoice = subscription.latest_invoice;
-  return invoice && typeof invoice !== "string" ? invoice : null;
+  return Expanded(subscription.latest_invoice) ?? null;
 }
 
 function ending(
@@ -79,8 +78,7 @@ export function ToSubscription(
       value: item.price.unit_amount ?? 0,
       currency: item.price.currency.toUpperCase(),
     },
-    interval: (item.price.recurring?.interval ??
-      "month") as SubscriptionInterval,
+    interval: item.price.recurring?.interval ?? "month",
     intervalCount: item.price.recurring?.interval_count ?? 1,
     status,
     currentPeriodStart: ToEpochMillis(item.current_period_start),

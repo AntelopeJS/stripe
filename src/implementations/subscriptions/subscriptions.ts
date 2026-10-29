@@ -12,6 +12,7 @@ import {
   ValidateSubscriptionRequest,
 } from "@antelopejs/interface-subscriptions";
 
+import { IsStripeId } from "../fields";
 import { SubscriptionProduct } from "./product";
 import { GetAccount } from "../payment/accounts";
 import { IsOwnSubscription, ToSubscription } from "./mapping";
@@ -81,16 +82,15 @@ function createParams(
 
 async function declinedPayment(
   client: Stripe,
-  error: unknown,
+  error: Stripe.errors.StripeCardError,
 ): Promise<Payment | undefined> {
-  if (!(error instanceof Stripe.errors.StripeCardError) || !error.charge) {
+  if (!error.charge) {
     return undefined;
   }
   const charge = await client.charges.retrieve(error.charge);
-  const intent =
-    typeof charge.payment_intent === "string"
-      ? charge.payment_intent
-      : charge.payment_intent?.id;
+  const intent = IsStripeId(charge.payment_intent)
+    ? charge.payment_intent
+    : charge.payment_intent?.id;
   if (!intent) return undefined;
   return ToPayment(
     await client.paymentIntents.retrieve(intent, { expand: ["latest_charge"] }),
@@ -114,14 +114,16 @@ export async function CreateSubscription(
     );
     return ToSubscription(created);
   } catch (error) {
-    const declined = await TranslatingSubscription(request.customer, () =>
-      declinedPayment(client, error),
-    );
-    if (declined && error instanceof Stripe.errors.StripeCardError) {
-      throw new SubscriptionPaymentError(
-        declined,
-        error.decline_code ?? error.code,
+    if (error instanceof Stripe.errors.StripeCardError) {
+      const declined = await TranslatingSubscription(request.customer, () =>
+        declinedPayment(client, error),
       );
+      if (declined) {
+        throw new SubscriptionPaymentError(
+          declined,
+          error.decline_code ?? error.code,
+        );
+      }
     }
     throw TranslateSubscriptionError(error, request.customer);
   }
@@ -160,7 +162,9 @@ export async function ListSubscriptions(
       .filter((subscription) => IsOwnSubscription(subscription.metadata))
       .map((subscription) => ToSubscription(subscription));
   } catch (error) {
-    if (IsAnyMissing(error)) return [];
+    if (error instanceof Stripe.errors.StripeError && IsAnyMissing(error)) {
+      return [];
+    }
     throw TranslateSubscriptionError(error, customer);
   }
 }
@@ -231,7 +235,9 @@ export async function CancelSubscription(
   try {
     return ToSubscription(await cancel(client, id, idempotencyKey));
   } catch (error) {
-    if (!IsMissing(error)) throw TranslateSubscriptionError(error, id);
+    const isMissing =
+      error instanceof Stripe.errors.StripeError && IsMissing(error);
+    if (!isMissing) throw TranslateSubscriptionError(error, id);
     const replayed = await replayedOrMissing(client, id, idempotencyKey);
     if (replayed instanceof Error) throw replayed;
     return replayed;
