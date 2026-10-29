@@ -7,6 +7,7 @@ import type {
 
 import { Translating } from "./errors";
 import { GetAccount } from "./accounts";
+import { Lookup } from "../fields";
 import { ToRefund, WriteMetadata } from "./mapping";
 
 /**
@@ -20,11 +21,11 @@ const REFUND_ENTITY = {
 };
 
 /** Stripe accepts three reasons; the contract has a fourth. */
-const STRIPE_REASONS: Record<string, Stripe.RefundCreateParams.Reason> = {
+const STRIPE_REASONS = {
   duplicate: "duplicate",
   fraudulent: "fraudulent",
   requested_by_customer: "requested_by_customer",
-};
+} satisfies Partial<Record<RefundReason, Stripe.RefundCreateParams.Reason>>;
 
 /** The reason metadata key, for a reason Stripe has no field for. */
 const REASON_KEY = "antelope_refund_reason";
@@ -33,14 +34,28 @@ function toReason(reason: RefundReason | undefined): Stripe.RefundCreateParams {
   if (!reason) {
     return {};
   }
-  const native = STRIPE_REASONS[reason];
+  const native = Lookup(STRIPE_REASONS, reason);
   return native ? { reason: native } : {};
 }
 
 function reasonMetadata(
   reason: RefundReason | undefined,
 ): Record<string, string> {
-  return reason && !STRIPE_REASONS[reason] ? { [REASON_KEY]: reason } : {};
+  return reason && !Lookup(STRIPE_REASONS, reason)
+    ? { [REASON_KEY]: reason }
+    : {};
+}
+
+function refundParams(request: RefundRequest): Stripe.RefundCreateParams {
+  const params: Stripe.RefundCreateParams = {
+    payment_intent: request.payment,
+    metadata: WriteMetadata("", {
+      ...request.metadata,
+      ...reasonMetadata(request.reason),
+    }),
+  };
+  if (request.amount) params.amount = request.amount.value;
+  return { ...params, ...toReason(request.reason) };
 }
 
 export async function RefundPayment(
@@ -51,18 +66,7 @@ export async function RefundPayment(
   const { client } = GetAccount(provider);
   return Translating(request.payment, REFUND_ENTITY, async () =>
     ToRefund(
-      await client.refunds.create(
-        {
-          payment_intent: request.payment,
-          metadata: WriteMetadata("", {
-            ...request.metadata,
-            ...reasonMetadata(request.reason),
-          }),
-          ...(request.amount ? { amount: request.amount.value } : {}),
-          ...toReason(request.reason),
-        },
-        { idempotencyKey },
-      ),
+      await client.refunds.create(refundParams(request), { idempotencyKey }),
     ),
   );
 }

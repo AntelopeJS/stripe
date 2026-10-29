@@ -1,27 +1,25 @@
 import Stripe from "stripe";
 import assert from "node:assert/strict";
 import {
-  PAYMENT_EVENT_TYPES,
   type PaymentEvent,
   VerifyWebhook,
   WebhookVerificationError,
 } from "@antelopejs/interface-payment";
 
+import type { WireObject } from "./wire";
+
 const SECRET = process.env.STRIPE_TEST_WEBHOOK_SECRET ?? "";
-const EPOCH_MILLIS_FLOOR = Date.UTC(2020, 0, 1);
 const CREATED_SECONDS = 1_760_000_000;
 const CREATED_MILLIS = CREATED_SECONDS * 1000;
 const AMOUNT = 2500;
 const CAPTURED = 1000;
 const REFUNDED = 700;
 
-const signer = new Stripe("sk_test_unused_for_signing_only", {
-  apiVersion: undefined as unknown as Stripe.LatestApiVersion,
-});
+const signer = new Stripe("sk_test_unused_for_signing_only");
 
 function deliver(
   type: string,
-  object: unknown,
+  object: Stripe.Event.Data.Object,
 ): Promise<PaymentEvent | undefined> {
   const payload = JSON.stringify({
     id: `evt_${type.replace(/\W/g, "_")}`,
@@ -40,7 +38,7 @@ function deliver(
   });
 }
 
-function intent(overrides: Record<string, unknown>): Record<string, unknown> {
+function intent(overrides: WireObject) {
   return {
     id: "pi_webhook",
     object: "payment_intent",
@@ -68,9 +66,7 @@ describe("[stripe] webhook event normalisation", () => {
 
     assert.ok(event, "a modelled delivery must produce an event");
     assert.equal(event.type, "payment.succeeded");
-    assert.ok(PAYMENT_EVENT_TYPES.includes(event.type));
     assert.equal(event.createdAt, CREATED_MILLIS);
-    assert.ok(event.createdAt > EPOCH_MILLIS_FLOOR);
     assert.ok(event.payment, "a payment event must carry the payment");
     assert.equal(event.payment.id, "pi_webhook");
     assert.equal(event.payment.status, "succeeded");

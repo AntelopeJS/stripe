@@ -14,6 +14,7 @@ import {
 } from "@antelopejs/interface-subscriptions";
 
 import { DeliverWebhook as deliver } from "./signed-webhook";
+import { IsStripeId } from "../implementations/fields";
 
 const SUITE_TIMEOUT = 120_000;
 const HANDLER = "stripe-subscription-ownership";
@@ -73,7 +74,9 @@ describe("[stripe] subscriptions made outside this module", function () {
       GetSubscription(foreign.id),
       SubscriptionNotFoundError,
     );
-    assert.deepEqual(await ListSubscriptions(foreign.customer as string), []);
+    const { customer } = foreign;
+    assert.ok(IsStripeId(customer), "the subscription names its customer");
+    assert.deepEqual(await ListSubscriptions(customer), []);
     await assert.rejects(
       CancelSubscription(foreign.id, `ownership-${randomUUID()}`, "now"),
       SubscriptionNotFoundError,
@@ -93,9 +96,9 @@ describe("[stripe] subscriptions made outside this module", function () {
   });
 
   it("raise no subscription events", async () => {
-    const invoice = await client.invoices.retrieve(
-      foreign.latest_invoice as string,
-    );
+    const { latest_invoice } = foreign;
+    assert.ok(IsStripeId(latest_invoice), "the subscription has an invoice");
+    const invoice = await client.invoices.retrieve(latest_invoice);
 
     await deliver("customer.subscription.created", foreign);
     await deliver("invoice.paid", invoice);
@@ -107,10 +110,13 @@ describe("[stripe] subscriptions made outside this module", function () {
   });
 
   it("leave their charges unmarked", async () => {
+    const { latest_invoice } = foreign;
+    assert.ok(IsStripeId(latest_invoice), "the subscription has an invoice");
     const payments = await client.invoicePayments.list({
-      invoice: foreign.latest_invoice as string,
+      invoice: latest_invoice,
     });
-    const intent = payments.data[0].payment.payment_intent as string;
+    const intent = payments.data[0].payment.payment_intent;
+    assert.ok(IsStripeId(intent), "the invoice was paid by a payment intent");
 
     const payment = await GetPayment(intent);
 

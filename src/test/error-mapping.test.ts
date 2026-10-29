@@ -24,9 +24,9 @@ function key(): string {
 
 function stripeError(
   Kind: new (raw: Stripe.StripeRawError) => Stripe.errors.StripeError,
-  raw: Partial<Stripe.StripeRawError>,
+  raw: Stripe.StripeRawError,
 ): Stripe.errors.StripeError {
-  return new Kind({ message: "boom", ...raw } as Stripe.StripeRawError);
+  return new Kind({ message: "boom", ...raw });
 }
 
 describe("[stripe] translating provider errors", () => {
@@ -138,7 +138,7 @@ describe("[stripe] rejections the contract names", function () {
           },
           key(),
         ),
-      (error: unknown) =>
+      (error) =>
         error instanceof PaymentError &&
         /requires a customer/.test(error.message),
     );
@@ -158,7 +158,7 @@ describe("[stripe] rejections the contract names", function () {
           },
           key(),
         ),
-      (error: unknown) =>
+      (error) =>
         error instanceof PaymentError && /offSession/.test(error.message),
     );
   });
@@ -166,7 +166,7 @@ describe("[stripe] rejections the contract names", function () {
   it("reports an unconfigured provider selector in the interface vocabulary", async () => {
     await assert.rejects(
       () => GetPayment("pi_irrelevant", "no-such-account"),
-      (error: unknown) =>
+      (error) =>
         error instanceof PaymentError && /no-such-account/.test(error.message),
       "a misspelled account name must not escape as a bare Error",
     );
