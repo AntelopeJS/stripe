@@ -18,8 +18,8 @@ importers:
         specifier: '>=0.0.6 <0.1.0'
         version: 0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)
       '@antelopejs/interface-subscriptions':
-        specifier: '>=0.0.2 <0.1.0'
-        version: 0.0.2(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4))
+        specifier: '>=0.1.0 <0.2.0'
+        version: 0.1.0(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4))
       stripe:
         specifier: ^18.5.0
         version: 18.5.0(@types/node@22.19.15)
@@ -110,8 +110,8 @@ packages:
     peerDependencies:
       '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
-  '@antelopejs/interface-subscriptions@0.0.2':
-    resolution: {integrity: sha512-ineU+bO4dpeP7nv52mV+klnTzUNmzktXPF/y6PQ3T0KqTOg1awl2OWkOnN4ULvOCvih3SG/zor/QOWWLPhQriw==}
+  '@antelopejs/interface-subscriptions@0.1.0':
+    resolution: {integrity: sha512-FFFZrg5eG6Gflv77Dw1LU696uVC6gyJC11FnjPv1y4GU9fXLLe4MBFP0I83hJKHN1jq+ytBdAxSAa7B/aV4ptQ==}
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.5 <1.0.0'
       '@antelopejs/interface-payment': '>=0.0.2 <1.0.0'
@@ -2703,7 +2703,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@antelopejs/interface-subscriptions@0.0.2(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4))':
+  '@antelopejs/interface-subscriptions@0.1.0(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4))':
     dependencies:
       '@antelopejs/interface-core': 0.2.4
       '@antelopejs/interface-payment': 0.1.0(@antelopejs/interface-core@0.2.4)
