@@ -63,14 +63,14 @@ export default defineConfig({
       process.env.ANTELOPE_PAYMENT_TEST_METHOD_DECLINED = TEST_METHOD_DECLINED;
       process.env.ANTELOPE_PAYMENT_TEST_CURRENCY = TEST_CURRENCY;
       process.env.STRIPE_TEST_WEBHOOK_SECRET = TEST_WEBHOOK_SECRET;
+      const account = {
+        apiKey: IS_LIVE ? requireApiKey() : "sk_test_offline_fixture",
+        webhookSecret: TEST_WEBHOOK_SECRET,
+      };
       return {
         modules: {
           local: {
-            config: {
-              apiKey: IS_LIVE ? requireApiKey() : "sk_test_offline_fixture",
-              webhookSecret: TEST_WEBHOOK_SECRET,
-              ...(IS_LIVE ? {} : offlineConfig()),
-            },
+            config: IS_LIVE ? account : { ...account, ...offlineConfig() },
           },
         },
       };

@@ -8,22 +8,23 @@ import type {
 
 import { Translating } from "./errors";
 import { GetAccount } from "./accounts";
+import { Expanded, IsStripeId, Lookup } from "../fields";
 import { ToEpochMillis, ToPaymentStatus, WriteMetadata } from "./mapping";
 
 const SESSION_ENTITY = { entity: "checkout session" as const };
 const OPEN = "open";
 const EXPAND_INTENT = ["payment_intent"];
 
-// Stripe 18's types predate this supported Checkout parameter.
+/** Checkout parameters including `managed_payments`, which Stripe 18's types predate. */
 interface StandardCheckoutParams extends Stripe.Checkout.SessionCreateParams {
   managed_payments: { enabled: false };
 }
 
-const STATUS_BY_SESSION_STATUS: Record<string, PaymentStatus> = {
+const STATUS_BY_SESSION_STATUS = {
   complete: "succeeded",
   expired: "canceled",
   [OPEN]: "pending",
-};
+} satisfies Record<Stripe.Checkout.Session.Status, PaymentStatus>;
 
 function lineItem(
   request: CheckoutSessionRequest,
@@ -47,26 +48,22 @@ function lineItem(
  * distinguishes `authorized` and `failed`, which the session status cannot.
  */
 function toSession(session: Stripe.Checkout.Session): CheckoutSession {
-  const intent =
-    session.payment_intent && typeof session.payment_intent !== "string"
-      ? session.payment_intent
-      : undefined;
-  const paymentId =
-    typeof session.payment_intent === "string"
-      ? session.payment_intent
-      : intent?.id;
-  return {
+  const intent = Expanded(session.payment_intent);
+  const paymentId = IsStripeId(session.payment_intent)
+    ? session.payment_intent
+    : intent?.id;
+  const result: CheckoutSession = {
     id: session.id,
     redirectUrl: session.url ?? "",
     status:
       intent && session.status !== OPEN
         ? ToPaymentStatus(intent)
-        : (STATUS_BY_SESSION_STATUS[session.status ?? OPEN] ?? "pending"),
-    ...(paymentId ? { payment: paymentId } : {}),
-    ...(session.expires_at
-      ? { expiresAt: ToEpochMillis(session.expires_at) }
-      : {}),
+        : (Lookup(STATUS_BY_SESSION_STATUS, session.status ?? OPEN) ??
+          "pending"),
   };
+  if (paymentId) result.payment = paymentId;
+  if (session.expires_at) result.expiresAt = ToEpochMillis(session.expires_at);
+  return result;
 }
 
 export async function CreateCheckoutSession(
@@ -78,6 +75,12 @@ export async function CreateCheckoutSession(
     throw new PaymentError("savePaymentMethod requires a customer");
   }
   const { client } = GetAccount(provider);
+  const paymentIntentData: Stripe.Checkout.SessionCreateParams.PaymentIntentData =
+    { metadata: WriteMetadata(request.reference, request.metadata) };
+  if (request.authorizeOnly) paymentIntentData.capture_method = "manual";
+  if (request.savePaymentMethod) {
+    paymentIntentData.setup_future_usage = "off_session";
+  }
   const params: StandardCheckoutParams = {
     mode: "payment",
     managed_payments: { enabled: false },
@@ -85,20 +88,13 @@ export async function CreateCheckoutSession(
     success_url: request.successUrl,
     cancel_url: request.cancelUrl,
     metadata: WriteMetadata(request.reference, request.metadata),
-    payment_intent_data: {
-      metadata: WriteMetadata(request.reference, request.metadata),
-      ...(request.authorizeOnly ? { capture_method: "manual" as const } : {}),
-      ...(request.savePaymentMethod
-        ? { setup_future_usage: "off_session" as const }
-        : {}),
-    },
-    ...(request.customer ? { customer: request.customer } : {}),
-    ...(request.locale
-      ? {
-          locale: request.locale as Stripe.Checkout.SessionCreateParams.Locale,
-        }
-      : {}),
+    payment_intent_data: paymentIntentData,
   };
+  if (request.customer) params.customer = request.customer;
+  if (request.locale) {
+    params.locale =
+      request.locale as Stripe.Checkout.SessionCreateParams.Locale;
+  }
   return Translating("", SESSION_ENTITY, async () =>
     toSession(
       await client.checkout.sessions.create(params, { idempotencyKey }),

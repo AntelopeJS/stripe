@@ -8,11 +8,11 @@ import {
 const SECOND_MS = 1000;
 const signer = new Stripe("sk_test_unused_for_signing_only");
 
-export function SignedWebhook(
+function signed(
   type: string,
-  object: unknown,
+  object: Stripe.Event.Data.Object,
   secret: string,
-): WebhookRequest {
+) {
   const payload = JSON.stringify({
     id: `evt_${randomUUID().replace(/-/g, "")}`,
     object: "event",
@@ -21,17 +21,34 @@ export function SignedWebhook(
     data: { object },
   });
   return {
-    body: Buffer.from(payload),
-    headers: {
-      "stripe-signature": signer.webhooks.generateTestHeaderString({
-        payload,
-        secret,
-      }),
-    },
+    payload,
+    signature: signer.webhooks.generateTestHeaderString({ payload, secret }),
   };
 }
 
-export function DeliverWebhook(type: string, object: unknown) {
+export function SignedWebhook(
+  type: string,
+  object: Stripe.Event.Data.Object,
+  secret: string,
+): WebhookRequest {
+  const { payload, signature } = signed(type, object, secret);
+  return {
+    body: Buffer.from(payload),
+    headers: { "stripe-signature": signature },
+  };
+}
+
+/** A delivery parsed back through Stripe's own verifier, as a typed event. */
+export function SignedEvent(
+  type: string,
+  object: Stripe.Event.Data.Object,
+  secret: string,
+): Stripe.Event {
+  const { payload, signature } = signed(type, object, secret);
+  return signer.webhooks.constructEvent(payload, signature, secret);
+}
+
+export function DeliverWebhook(type: string, object: Stripe.Event.Data.Object) {
   return VerifyWebhook(
     SignedWebhook(type, object, process.env.STRIPE_TEST_WEBHOOK_SECRET ?? ""),
   );

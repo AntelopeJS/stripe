@@ -6,6 +6,8 @@ import {
   SubscriptionNotFoundError,
 } from "@antelopejs/interface-subscriptions";
 
+import { Lookup } from "../fields";
+
 const RESOURCE_MISSING = "resource_missing";
 const CANCELED_FIELDS = "invalid_canceled_subscription_fields";
 const INVALID_REQUEST = "invalid_request_error";
@@ -21,18 +23,18 @@ function missing(error: Stripe.errors.StripeError, id: string): Error {
   return new SubscriptionNotFoundError(id, error.code);
 }
 
-const BY_CODE: Record<string, Translation> = {
+const BY_CODE = {
   [RESOURCE_MISSING]: missing,
   [CANCELED_FIELDS]: (error) =>
     new InvalidSubscriptionStateError(error.message, "canceled", error.code),
-};
+} satisfies Record<string, Translation>;
 
-export function TranslateSubscriptionError(
-  error: unknown,
+export function TranslateSubscriptionError<Cause>(
+  error: Cause,
   id: string,
-): unknown {
+): Cause | Error {
   if (!(error instanceof Stripe.errors.StripeError)) return error;
-  const translate = error.code ? BY_CODE[error.code] : undefined;
+  const translate = error.code ? Lookup(BY_CODE, error.code) : undefined;
   if (translate) return translate(error, id);
   if (error.rawType === INVALID_REQUEST) {
     return new InvalidSubscriptionRequestError(error.message, error.code);
@@ -43,11 +45,9 @@ export function TranslateSubscriptionError(
   );
 }
 
-export function IsMissing(error: unknown): boolean {
+export function IsMissing(error: Stripe.errors.StripeError): boolean {
   return (
-    error instanceof Stripe.errors.StripeError &&
-    error.code === RESOURCE_MISSING &&
-    !REQUEST_PARAMS.has(error.param ?? "")
+    error.code === RESOURCE_MISSING && !REQUEST_PARAMS.has(error.param ?? "")
   );
 }
 
@@ -62,9 +62,6 @@ export async function TranslatingSubscription<T>(
   }
 }
 
-export function IsAnyMissing(error: unknown): boolean {
-  return (
-    error instanceof Stripe.errors.StripeError &&
-    error.code === RESOURCE_MISSING
-  );
+export function IsAnyMissing(error: Stripe.errors.StripeError): boolean {
+  return error.code === RESOURCE_MISSING;
 }
