@@ -66,21 +66,18 @@ Store the session ID and redirect the payer to `redirectUrl`. A browser return i
 
 ## Compatibility
 
-<!-- docs-compat: ./package.json#dependencies -->
+<!-- antelopejs-docs-compat:start -->
 
-| Package                               | Range            |
-| ------------------------------------- | ---------------- |
-| `@antelopejs/interface-core`          | `>=0.2.4 <1.0.0` |
-| `@antelopejs/interface-stripe`        | `>=0.0.6 <0.1.0` |
-| `@antelopejs/interface-payment`       | `>=0.1.0 <0.2.0` |
-| `@antelopejs/interface-subscriptions` | `>=0.1.0 <0.2.0` |
+| Package                               | Supported         | Tested with |
+| ------------------------------------- | ----------------- | ----------- |
+| `@antelopejs/interface-api`           | `>=0.0.15 <1.0.0` | `0.0.15`    |
+| `@antelopejs/interface-core`          | `>=0.2.4 <1.0.0`  | `0.2.4`     |
+| `@antelopejs/interface-payment`       | `>=0.1.0 <0.2.0`  | `0.1.0`     |
+| `@antelopejs/interface-redis`         | `>=0.0.9 <1.0.0`  | `0.0.9`     |
+| `@antelopejs/interface-stripe`        | `>=0.0.6 <0.1.0`  | `0.0.6`     |
+| `@antelopejs/interface-subscriptions` | `>=0.1.0 <0.2.0`  | `0.1.0`     |
 
-<!-- docs-compat: ./package.json#optionalDependencies -->
-
-| Package                       | Range             |
-| ----------------------------- | ----------------- |
-| `@antelopejs/interface-api`   | `>=0.0.15 <1.0.0` |
-| `@antelopejs/interface-redis` | `>=0.0.9 <1.0.0`  |
+<!-- antelopejs-docs-compat:end -->
 
 These are the manifest's interface requirements. Development targets `@antelopejs/core` 1.16.0 on Node.js 24 and uses `stripe` `^18.5.0`.
 
