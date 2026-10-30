@@ -1,5 +1,7 @@
 {
+  "pack": "0.2.17",
   "rules": {
+    "antelopejs/no-presence-only-type-guard": 1,
     "anti-slop/require-safety-comment-for-type-assertion": 2
   },
   "oversizeFiles": {}
