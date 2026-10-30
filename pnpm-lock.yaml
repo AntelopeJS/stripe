@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@antelopejs/interface-payment': file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz
+
 importers:
 
   .:
@@ -12,14 +15,14 @@ importers:
         specifier: '>=0.2.4 <1.0.0'
         version: 0.2.4
       '@antelopejs/interface-payment':
-        specifier: '>=0.1.0 <0.2.0'
-        version: 0.1.0(@antelopejs/interface-core@0.2.4)
+        specifier: file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz
+        version: file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz(@antelopejs/interface-core@0.2.4)
       '@antelopejs/interface-stripe':
         specifier: '>=0.0.6 <0.1.0'
         version: 0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)
       '@antelopejs/interface-subscriptions':
         specifier: '>=0.1.0 <0.2.0'
-        version: 0.1.0(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4))
+        version: 0.1.0(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz(@antelopejs/interface-core@0.2.4))
       stripe:
         specifier: ^18.5.0
         version: 18.5.0(@types/node@22.19.15)
@@ -95,8 +98,9 @@ packages:
   '@antelopejs/interface-core@0.2.4':
     resolution: {integrity: sha512-2qF6/KwahCQvvNuC/piUvPWD4wq2Npmco941HMg2/bMBoJKbhMH16WcXXRvPYznNSkU0U+6vqK6KE+2N5NojSA==}
 
-  '@antelopejs/interface-payment@0.1.0':
-    resolution: {integrity: sha512-n3AfzR73ApPqhRw/iHVWf7A9jadHCSLDTrSDnyGsxqG1ydYEaUfPjfIX56PU1RsrPi8O+FXCiYZcuG8jdEL2Mw==}
+  '@antelopejs/interface-payment@file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz':
+    resolution: {integrity: sha512-x0lxxb954vc7LgqG59mRfj6pR9K4JORNUvte8hYRtCNpZcG1xUHvfQYJSCKD3wwIL0/PhacNy6HD7SgxRT0GFg==, tarball: file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz}
+    version: 0.2.0
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
 
@@ -112,6 +116,7 @@ packages:
 
   '@antelopejs/interface-subscriptions@0.1.0':
     resolution: {integrity: sha512-FFFZrg5eG6Gflv77Dw1LU696uVC6gyJC11FnjPv1y4GU9fXLLe4MBFP0I83hJKHN1jq+ytBdAxSAa7B/aV4ptQ==}
+    version: 0.1.0
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.5 <1.0.0'
       '@antelopejs/interface-payment': '>=0.0.2 <1.0.0'
@@ -2684,7 +2689,7 @@ snapshots:
     dependencies:
       reflect-metadata: 0.2.2
 
-  '@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4)':
+  '@antelopejs/interface-payment@file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz(@antelopejs/interface-core@0.2.4)':
     dependencies:
       '@antelopejs/interface-core': 0.2.4
 
@@ -2703,10 +2708,10 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@antelopejs/interface-subscriptions@0.1.0(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4))':
+  '@antelopejs/interface-subscriptions@0.1.0(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz(@antelopejs/interface-core@0.2.4))':
     dependencies:
       '@antelopejs/interface-core': 0.2.4
-      '@antelopejs/interface-payment': 0.1.0(@antelopejs/interface-core@0.2.4)
+      '@antelopejs/interface-payment': file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz(@antelopejs/interface-core@0.2.4)
 
   '@antelopejs/tooling-configs@0.2.17(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))':
     dependencies:
