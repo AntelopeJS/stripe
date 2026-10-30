@@ -300,3 +300,20 @@ describe("[stripe] provider boundary regressions without credentials", () => {
     );
   });
 });
+
+describe("[stripe] reading lookup tables", () => {
+  const table = { open: "pending", complete: "paid" };
+
+  it("answers the value of an own key", () => {
+    assert.equal(Lookup(table, "complete"), "paid");
+  });
+
+  it("answers nothing for a key the table does not hold", () => {
+    assert.equal(Lookup(table, "expired"), undefined);
+  });
+
+  it("answers nothing for an Object.prototype member", () => {
+    assert.equal(Lookup(table, "constructor"), undefined);
+    assert.equal(Lookup(table, "toString"), undefined);
+  });
+});
