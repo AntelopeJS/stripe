@@ -36,7 +36,7 @@
     "lint:fix": "oxlint --fix",
     "prepack": "pnpm run build",
     "release": "pnpm run lint && pnpm run test && pnpm run prepack && release-it",
-    "test": "pnpm run build && ajs module test . -f dist/test/provider-regressions.test.js -f dist/test/webhook-events.test.js -f dist/test/interface-stripe.test.js",
+    "test": "pnpm run build && ajs module test . -f dist/test/provider-regressions.test.js -f dist/test/webhook-events.test.js -f dist/test/interface-stripe.test.js -f dist/test/redis-relay.test.js",
     "test:stripe": "pnpm run build && ANTELOPE_STRIPE_TEST_MODE=live ajs module test .",
     "typecheck": "tsc --noEmit",
     "format:check": "oxfmt --check .",
@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "@antelopejs/core": "^1.16.0",
+    "@antelopejs/redis": "^1.0.4",
     "@antelopejs/tooling-configs": "^0.2.17",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.15",
