@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index 5d4d607..79414f7 100644
+--- a/package.json
++++ b/package.json
+@@ -26,7 +26,7 @@
+   "main": "dist/index.js",
+   "types": "dist/index.d.ts",
+   "publishConfig": {
+-    "access": "public",
++    "access": "restricted",
+     "provenance": true
+   },
+   "scripts": {

@@ -1,0 +1,13 @@
+diff --git a/src/implementations/subscriptions/subscriptions.ts b/src/implementations/subscriptions/subscriptions.ts
+index d4b7026..2ef96aa 100644
+--- a/src/implementations/subscriptions/subscriptions.ts
++++ b/src/implementations/subscriptions/subscriptions.ts
+@@ -64,7 +64,7 @@ function createParams(
+         },
+       },
+     ],
+-    payment_behavior: "error_if_incomplete",
++    payment_behavior: "allow_incomplete",
+     off_session: true,
+     metadata: WriteMetadata(request.reference, request.metadata),
+     expand: EXPAND_LATEST_PAYMENT,

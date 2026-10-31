@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/accounts.ts b/src/implementations/payment/accounts.ts
+index c284b49..c75d427 100644
+--- a/src/implementations/payment/accounts.ts
++++ b/src/implementations/payment/accounts.ts
+@@ -28,7 +28,7 @@ export function ClearAccounts(): void {
+  * @throws Error if the module was not configured with that account
+  */
+ export function GetAccount(provider?: string): Account {
+-  const account = accounts.get(provider ?? DEFAULT_ACCOUNT);
++  const account = accounts.get(provider ?? DEFAULT_ACCOUNT) ?? accounts.get(DEFAULT_ACCOUNT);
+   if (!account) {
+     throw new PaymentError(
+       provider
