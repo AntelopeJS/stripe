@@ -1,7 +1,0 @@
-{
-  "pack": "0.2.17",
-  "rules": {
-    "anti-slop/require-safety-comment-for-type-assertion": 1
-  },
-  "oversizeFiles": {}
-}
