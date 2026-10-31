@@ -72,7 +72,7 @@ Store the session ID and redirect the payer to `redirectUrl`. A browser return i
 | ------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
 | `@antelopejs/interface-api`           | `>=0.0.15 <1.0.0`                                             | `0.0.15`                                                      |
 | `@antelopejs/interface-core`          | `>=0.2.4 <1.0.0`                                              | `0.2.4`                                                       |
-| `@antelopejs/interface-payment`       | `file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz` | `file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz` |
+| `@antelopejs/interface-payment`       | `file:.campaign/tgz/antelopejs-interface-payment-0f2509a.tgz` | `file:.campaign/tgz/antelopejs-interface-payment-0f2509a.tgz` |
 | `@antelopejs/interface-redis`         | `>=0.0.9 <1.0.0`                                              | `0.0.9`                                                       |
 | `@antelopejs/interface-stripe`        | `>=0.0.6 <0.1.0`                                              | `0.0.6`                                                       |
 | `@antelopejs/interface-subscriptions` | `>=0.1.0 <0.2.0`                                              | `0.1.0`                                                       |

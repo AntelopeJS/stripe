@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@antelopejs/interface-core": ">=0.2.4 <1.0.0",
-    "@antelopejs/interface-payment": "file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz",
+    "@antelopejs/interface-payment": "file:.campaign/tgz/antelopejs-interface-payment-0f2509a.tgz",
     "@antelopejs/interface-stripe": ">=0.0.6 <0.1.0",
     "@antelopejs/interface-subscriptions": ">=0.1.0 <0.2.0",
     "stripe": "^18.5.0",
@@ -83,7 +83,7 @@
   "packageManager": "pnpm@10.6.5",
   "pnpm": {
     "overrides": {
-      "@antelopejs/interface-payment": "file:.campaign/tgz/antelopejs-interface-payment-d307fbd.tgz"
+      "@antelopejs/interface-payment": "file:.campaign/tgz/antelopejs-interface-payment-0f2509a.tgz"
     }
   },
   "antelopeJs": {
