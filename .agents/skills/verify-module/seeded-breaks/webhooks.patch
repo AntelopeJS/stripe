@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/webhooks.ts b/src/implementations/payment/webhooks.ts
+index e390e02..c7dd1c3 100644
+--- a/src/implementations/payment/webhooks.ts
++++ b/src/implementations/payment/webhooks.ts
+@@ -19,7 +19,7 @@ const PAYMENT_EVENTS = {
+   "payment_intent.canceled": "payment.canceled",
+   "payment_intent.payment_failed": "payment.failed",
+   "payment_intent.processing": "payment.pending",
+-  "payment_intent.succeeded": "payment.succeeded",
++  "payment_intent.succeeded": "payment.pending",
+ } satisfies Partial<Record<Stripe.Event.Type, PaymentEventType>>;
+ 
+ const REFUND_EVENTS = {

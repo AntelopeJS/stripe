@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index 5d4d607..0372d99 100644
+--- a/package.json
++++ b/package.json
+@@ -50,7 +50,7 @@
+     "suppressions:update": "antelopejs-suppressions --update"
+   },
+   "dependencies": {
+-    "@antelopejs/interface-core": ">=0.2.4 <1.0.0",
++    "@antelopejs/interface-core": ">=0.2.0 <1.0.0",
+     "@antelopejs/interface-payment": "file:.campaign/tgz/antelopejs-interface-payment-0f2509a.tgz",
+     "@antelopejs/interface-stripe": ">=0.0.6 <0.1.0",
+     "@antelopejs/interface-subscriptions": ">=0.1.0 <0.2.0",

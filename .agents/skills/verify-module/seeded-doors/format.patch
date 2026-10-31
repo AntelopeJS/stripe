@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/mapping.ts b/src/implementations/payment/mapping.ts
+index 5dd64db..9b4c60c 100644
+--- a/src/implementations/payment/mapping.ts
++++ b/src/implementations/payment/mapping.ts
+@@ -17,7 +17,7 @@ import type {
+ import { Expanded, IsStripeId, Lookup } from "../fields";
+ 
+ /** Metadata key the caller's own reference is round-tripped through. */
+-export const REFERENCE_KEY = "antelope_reference";
++export const REFERENCE_KEY = "antelope_ref";
+ 
+ const MILLIS_PER_SECOND = 1000;
+ 
