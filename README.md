@@ -17,7 +17,7 @@ The AntelopeJS Stripe provider implements portable payments and Stripe-native su
 | `@antelopejs/interface-subscriptions` | Recurring billing scheduled by Stripe. This is the recommended subscription implementation for Stripe.           |
 | `@antelopejs/interface-stripe`        | Existing Stripe SDK integrations and payment watchers. See the [legacy Stripe guide](./docs/5.legacy-stripe.md). |
 
-Portable payments and Stripe-native subscriptions are available from `@antelopejs/stripe` 1.1.0 with the portable interfaces from 0.0.2. The generic `payment-subscriptions` scheduler is an explicit alternative, not a second scheduler to enable alongside Stripe-native subscriptions.
+Portable payments and Stripe-native subscriptions are available from release 1.1.0 of this module. The generic `payment-subscriptions` scheduler is an explicit alternative, not a second scheduler to enable alongside Stripe-native subscriptions.
 
 ## Install and configure
 
@@ -79,7 +79,7 @@ Store the session ID and redirect the payer to `redirectUrl`. A browser return i
 
 <!-- antelopejs-docs-compat:end -->
 
-These are the manifest's interface requirements. Development targets `@antelopejs/core` 1.16.0 on Node.js 24 and uses `stripe` `^18.5.0`.
+These are the manifest's interface requirements. Development targets Node.js 24 and uses `stripe` `^18.5.0`.
 
 ## Contributing and verification
 
