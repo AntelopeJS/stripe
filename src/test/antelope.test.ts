@@ -55,6 +55,10 @@ export default defineConfig({
   cacheFolder: ".antelope/cache",
   modules: {
     local: { source: { type: "local", path: "." } },
+    redis: {
+      source: { type: "local", path: "node_modules/@antelopejs/redis" },
+      config: { useMock: true },
+    },
   },
   test: {
     folder: "dist/test",
