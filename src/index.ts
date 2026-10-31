@@ -36,7 +36,7 @@ interface Config extends Stripe.StripeConfig {
   accounts?: Record<string, AccountConfig>;
 }
 
-const PAYMENT_INTENT_CHANGES_CHANNEL = "stripe:payment_intent:changes";
+const PAYMENT_INTENT_CHANGES_CHANNEL = "stripe:payment_intent:webhooks";
 const REDIS_INTERFACE = "@antelopejs/interface-redis";
 const API_INTERFACE = "@antelopejs/interface-api";
 const PROCESSED_MESSAGE_IDS_LIMIT = 1000;

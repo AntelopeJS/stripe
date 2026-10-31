@@ -10,7 +10,7 @@ import {
 import { RelayMessage } from "../relay";
 import { SignedPayload } from "./signed-webhook";
 
-const CHANNEL = "stripe:payment_intent:changes";
+const CHANNEL = "stripe:payment_intent:webhooks";
 const SECRET = process.env.STRIPE_TEST_WEBHOOK_SECRET ?? "";
 const FOREIGN_SECRET = "whsec_another_account_entirely";
 const WAIT_MS = 2000;
