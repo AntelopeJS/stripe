@@ -7,6 +7,7 @@ import {
   internal as stripeInternal,
 } from "@antelopejs/interface-stripe";
 
+import { RelayMessage } from "../relay";
 import { SignedPayload } from "./signed-webhook";
 
 const CHANNEL = "stripe:payment_intent:changes";
@@ -72,6 +73,21 @@ describe("[stripe] payment intent changes over Redis", () => {
     assert.deepStrictEqual(
       await relayedFrom([relay("pi_relayed", SECRET)], 1),
       [{ id: "pi_relayed", local: false }],
+    );
+  });
+
+  it("accepts what an instance publishes for a webhook it verified", async () => {
+    const { payload, signature } = SignedPayload(
+      "payment_intent.succeeded",
+      intent("pi_published"),
+      SECRET,
+    );
+    assert.deepStrictEqual(
+      await relayedFrom(
+        [RelayMessage(randomUUID(), Buffer.from(payload), signature)],
+        1,
+      ),
+      [{ id: "pi_published", local: false }],
     );
   });
 
