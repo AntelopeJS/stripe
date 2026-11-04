@@ -1,5 +1,37 @@
 # Changelog
 
+## v1.2.0
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v1.1.0...v1.2.0)
+
+### 💅 Refactors
+
+- Clean the repo with the guardrail pack ([#34](https://github.com/AntelopeJS/stripe/pull/34))
+- **types:** Justify the two event payload assertions with SAFETY reasons ([#37](https://github.com/AntelopeJS/stripe/pull/37))
+
+### 📖 Documentation
+
+- **readme:** Use one Discord invite ([#46](https://github.com/AntelopeJS/stripe/pull/46))
+- **github:** Send questions and ideas to Discord ([#48](https://github.com/AntelopeJS/stripe/pull/48))
+- **readme:** Link the package to AntelopeJS and AntelopeJS DMS ([65e97c7](https://github.com/AntelopeJS/stripe/commit/65e97c7))
+
+### 📦 Build
+
+- **deps:** Adopt @antelopejs/interface-payment 0.1.0 ([#35](https://github.com/AntelopeJS/stripe/pull/35))
+- **deps:** Adopt @antelopejs/interface-subscriptions 0.1.0 ([#36](https://github.com/AntelopeJS/stripe/pull/36))
+- **deps:** Bump @antelopejs/tooling-configs to 0.2.17 ([#39](https://github.com/AntelopeJS/stripe/pull/39))
+
+### 🏡 Chore
+
+- Align public documentation and repository standards ([#30](https://github.com/AntelopeJS/stripe/pull/30))
+- Adopt the guardrail pack from tooling-configs 0.2.0 ([#31](https://github.com/AntelopeJS/stripe/pull/31))
+- Configure Renovate with the shared preset ([#32](https://github.com/AntelopeJS/stripe/pull/32))
+- Land the cleanup campaign on main ([#56](https://github.com/AntelopeJS/stripe/pull/56))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli ([@Upd4ting](http://github.com/Upd4ting))
+
 ## v1.1.0
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v1.0.3...v1.1.0)
