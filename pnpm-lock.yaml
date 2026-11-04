@@ -4,26 +4,22 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
-  '@antelopejs/core': file:.campaign/tgz/antelopejs-core-184eb90.tgz
-
 importers:
 
   .:
     dependencies:
       '@antelopejs/interface-core':
-        specifier: file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
-        version: file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
+        specifier: '>=0.4.0 <1.0.0'
+        version: 0.4.0
       '@antelopejs/interface-payment':
         specifier: '>=0.2.0 <0.3.0'
-        version: 0.2.0(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)
+        version: 0.2.0(@antelopejs/interface-core@0.4.0)
       '@antelopejs/interface-stripe':
         specifier: '>=0.0.6 <0.1.0'
-        version: 0.0.6(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)(@types/node@22.19.15)
+        version: 0.0.6(@antelopejs/interface-core@0.4.0)(@types/node@22.19.15)
       '@antelopejs/interface-subscriptions':
         specifier: '>=0.1.0 <0.2.0'
-        version: 0.1.0(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)(@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz))
+        version: 0.1.0(@antelopejs/interface-core@0.4.0)(@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@0.4.0))
       stripe:
         specifier: ^18.5.0
         version: 18.5.0(@types/node@22.19.15)
@@ -32,8 +28,8 @@ importers:
         version: 11.1.0
     devDependencies:
       '@antelopejs/core':
-        specifier: file:.campaign/tgz/antelopejs-core-184eb90.tgz
-        version: file:.campaign/tgz/antelopejs-core-184eb90.tgz
+        specifier: ^1.20.0
+        version: 1.20.0
       '@antelopejs/redis':
         specifier: ^1.0.4
         version: 1.0.4(@types/ioredis-mock@8.2.8(ioredis@5.10.1))
@@ -82,57 +78,49 @@ importers:
     optionalDependencies:
       '@antelopejs/interface-api':
         specifier: '>=0.0.15 <1.0.0'
-        version: 0.0.15(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)
+        version: 0.0.15(@antelopejs/interface-core@0.4.0)
       '@antelopejs/interface-redis':
         specifier: '>=0.0.9 <1.0.0'
-        version: 0.0.9(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)
+        version: 0.0.9(@antelopejs/interface-core@0.4.0)
 
 packages:
 
-  '@antelopejs/core@file:.campaign/tgz/antelopejs-core-184eb90.tgz':
-    resolution: {integrity: sha512-CsiXLalRIIxX5YHjMUVDlz0+zBGSeNjSNPdBTgHwVsWpT1bIeG8izJmbCgpi5tIs8rvxkdlEZ6eKa7yH1GK8CA==, tarball: file:.campaign/tgz/antelopejs-core-184eb90.tgz}
-    version: 1.20.0
+  '@antelopejs/core@1.20.0':
+    resolution: {integrity: sha512-7clqf/n8aUi4iCwMG0G2dWLQCwzy9ZxTLHLmOIEtfObw5wuN06s0+n57Zzjr3wbIyR2wD3Q4AeorqJ94QidIfg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
   '@antelopejs/interface-api@0.0.15':
     resolution: {integrity: sha512-BUtZXJcLoVaTwM+q4KpefVuoR235HUpQqd5nqAfx7S6CA3SED3EPnFFvCLzaNZXq3Vq6ErzqJqvir0TaI/kpXA==}
-    version: 0.0.15
     peerDependencies:
       '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
-  '@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz':
-    resolution: {integrity: sha512-ur2KLvtD8h4SCZ0VSoQDc1pg+E9Bk/py3EW3qHHdoo3i6RvKWrrDKsX2khVdqQESuF2QMc1sJ6B+7ISjx5TvpQ==, tarball: file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz}
-    version: 0.4.0
+  '@antelopejs/interface-core@0.4.0':
+    resolution: {integrity: sha512-IPX6dtt3KHknclN4mLOYeRYL2Odz1Pts+dtaZul62NghsBUX/0OFHD4Qhoaf+Beva4hjInbaF918ajr4Z5HVWQ==}
 
   '@antelopejs/interface-payment@0.2.0':
     resolution: {integrity: sha512-HvwSFYdvDxh6EfXgwJ09cd5B4qbrIM4N2DLJbPg4ZeerMPL5PT0srRc2JYIGwJIa2X24SOW9jALE8sCO96vnxg==}
-    version: 0.2.0
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
 
   '@antelopejs/interface-redis-scheduler@0.0.9':
     resolution: {integrity: sha512-cjMgKmJFrjzo0ZcA+08tiPH+KrAWRJQr2f+k51srbf7pApPcPgW7y96N53OKdxadD9FZw+UxYJIJcFM1nw8CBw==}
-    version: 0.0.9
     peerDependencies:
       '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
       '@antelopejs/interface-redis': '>=0.0.9 <1.0.0'
 
   '@antelopejs/interface-redis@0.0.9':
     resolution: {integrity: sha512-lI1zcm2J13tP4D/QKmsdKFBRIzjZ/GdG4z27uaOp/3yKPA3RkH5YgpzFm9pgBa353UIhgZDuVkozFJcFkqewUA==}
-    version: 0.0.9
     peerDependencies:
       '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
   '@antelopejs/interface-stripe@0.0.6':
     resolution: {integrity: sha512-mJ4JQMGAxjlpJSgnJWgZYPcP/pFCGGIAylc/H+kuKGAgxuuJ3akmGjy442cf6D39OvSz4K8rYvw6RbCVX6pfTg==}
-    version: 0.0.6
     peerDependencies:
       '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
   '@antelopejs/interface-subscriptions@0.1.0':
     resolution: {integrity: sha512-FFFZrg5eG6Gflv77Dw1LU696uVC6gyJC11FnjPv1y4GU9fXLLe4MBFP0I83hJKHN1jq+ytBdAxSAa7B/aV4ptQ==}
-    version: 0.1.0
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.5 <1.0.0'
       '@antelopejs/interface-payment': '>=0.0.2 <1.0.0'
@@ -2718,9 +2706,9 @@ packages:
 
 snapshots:
 
-  '@antelopejs/core@file:.campaign/tgz/antelopejs-core-184eb90.tgz':
+  '@antelopejs/core@1.20.0':
     dependencies:
-      '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
+      '@antelopejs/interface-core': 0.4.0
       '@clack/prompts': 1.8.1
       '@types/proper-lockfile': 4.1.4
       commander: 13.1.0
@@ -2733,51 +2721,51 @@ snapshots:
       semver: 7.8.5
       typescript: 5.9.3
 
-  '@antelopejs/interface-api@0.0.15(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)':
+  '@antelopejs/interface-api@0.0.15(@antelopejs/interface-core@0.4.0)':
     dependencies:
-      '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
+      '@antelopejs/interface-core': 0.4.0
     optional: true
 
-  '@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz':
+  '@antelopejs/interface-core@0.4.0':
     dependencies:
       reflect-metadata: 0.2.2
 
-  '@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)':
+  '@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@0.4.0)':
     dependencies:
-      '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
+      '@antelopejs/interface-core': 0.4.0
 
-  '@antelopejs/interface-redis-scheduler@0.0.9(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)(@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz))':
+  '@antelopejs/interface-redis-scheduler@0.0.9(@antelopejs/interface-core@0.4.0)(@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.4.0))':
     dependencies:
-      '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
-      '@antelopejs/interface-redis': 0.0.9(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)
+      '@antelopejs/interface-core': 0.4.0
+      '@antelopejs/interface-redis': 0.0.9(@antelopejs/interface-core@0.4.0)
       ioredis: 5.10.1
     transitivePeerDependencies:
       - supports-color
 
-  '@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)':
+  '@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.4.0)':
     dependencies:
-      '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
+      '@antelopejs/interface-core': 0.4.0
       ioredis: 5.10.1
     transitivePeerDependencies:
       - supports-color
 
-  '@antelopejs/interface-stripe@0.0.6(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)(@types/node@22.19.15)':
+  '@antelopejs/interface-stripe@0.0.6(@antelopejs/interface-core@0.4.0)(@types/node@22.19.15)':
     dependencies:
-      '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
+      '@antelopejs/interface-core': 0.4.0
       stripe: 18.5.0(@types/node@22.19.15)
     transitivePeerDependencies:
       - '@types/node'
 
-  '@antelopejs/interface-subscriptions@0.1.0(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)(@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz))':
+  '@antelopejs/interface-subscriptions@0.1.0(@antelopejs/interface-core@0.4.0)(@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@0.4.0))':
     dependencies:
-      '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
-      '@antelopejs/interface-payment': 0.2.0(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)
+      '@antelopejs/interface-core': 0.4.0
+      '@antelopejs/interface-payment': 0.2.0(@antelopejs/interface-core@0.4.0)
 
   '@antelopejs/redis@1.0.4(@types/ioredis-mock@8.2.8(ioredis@5.10.1))':
     dependencies:
-      '@antelopejs/interface-core': file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz
-      '@antelopejs/interface-redis': 0.0.9(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)
-      '@antelopejs/interface-redis-scheduler': 0.0.9(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz)(@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz))
+      '@antelopejs/interface-core': 0.4.0
+      '@antelopejs/interface-redis': 0.0.9(@antelopejs/interface-core@0.4.0)
+      '@antelopejs/interface-redis-scheduler': 0.0.9(@antelopejs/interface-core@0.4.0)(@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.4.0))
       ioredis: 5.10.1
       ioredis-mock: 8.13.1(@types/ioredis-mock@8.2.8(ioredis@5.10.1))(ioredis@5.10.1)
     transitivePeerDependencies:
