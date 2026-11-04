@@ -68,14 +68,14 @@ Store the session ID and redirect the payer to `redirectUrl`. A browser return d
 
 <!-- antelopejs-docs-compat:start -->
 
-| Package                               | Supported                                                     | Tested with                                                   |
-| ------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
-| `@antelopejs/interface-api`           | `>=0.0.15 <1.0.0`                                             | `0.0.15`                                                      |
-| `@antelopejs/interface-core`          | `file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz`    | `file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz`    |
-| `@antelopejs/interface-payment`       | `file:.campaign/tgz/antelopejs-interface-payment-0f2509a.tgz` | `file:.campaign/tgz/antelopejs-interface-payment-0f2509a.tgz` |
-| `@antelopejs/interface-redis`         | `>=0.0.9 <1.0.0`                                              | `0.0.9`                                                       |
-| `@antelopejs/interface-stripe`        | `>=0.0.6 <0.1.0`                                              | `0.0.6`                                                       |
-| `@antelopejs/interface-subscriptions` | `>=0.1.0 <0.2.0`                                              | `0.1.0`                                                       |
+| Package                               | Supported                                                  | Tested with                                                |
+| ------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| `@antelopejs/interface-api`           | `>=0.0.15 <1.0.0`                                          | `0.0.15`                                                   |
+| `@antelopejs/interface-core`          | `file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz` | `file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz` |
+| `@antelopejs/interface-payment`       | `>=0.2.0 <0.3.0`                                           | `0.2.0`                                                    |
+| `@antelopejs/interface-redis`         | `>=0.0.9 <1.0.0`                                           | `0.0.9`                                                    |
+| `@antelopejs/interface-stripe`        | `>=0.0.6 <0.1.0`                                           | `0.0.6`                                                    |
+| `@antelopejs/interface-subscriptions` | `>=0.1.0 <0.2.0`                                           | `0.1.0`                                                    |
 
 <!-- antelopejs-docs-compat:end -->
 
