@@ -50,7 +50,7 @@
     "suppressions:update": "antelopejs-suppressions --update"
   },
   "dependencies": {
-    "@antelopejs/interface-core": "file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz",
+    "@antelopejs/interface-core": ">=0.4.0 <1.0.0",
     "@antelopejs/interface-payment": ">=0.2.0 <0.3.0",
     "@antelopejs/interface-stripe": ">=0.0.6 <0.1.0",
     "@antelopejs/interface-subscriptions": ">=0.1.0 <0.2.0",
@@ -58,7 +58,7 @@
     "uuid": "11.1.0"
   },
   "devDependencies": {
-    "@antelopejs/core": "file:.campaign/tgz/antelopejs-core-184eb90.tgz",
+    "@antelopejs/core": "^1.20.0",
     "@antelopejs/redis": "^1.0.4",
     "@antelopejs/tooling-configs": "^0.2.17",
     "@types/mocha": "^10.0.10",
@@ -80,12 +80,6 @@
     "@antelopejs/interface-redis": ">=0.0.9 <1.0.0"
   },
   "packageManager": "pnpm@10.6.5",
-  "pnpm": {
-    "overrides": {
-      "@antelopejs/interface-core": "file:.campaign/tgz/antelopejs-interface-core-f7df541.tgz",
-      "@antelopejs/core": "file:.campaign/tgz/antelopejs-core-184eb90.tgz"
-    }
-  },
   "antelopeJs": {
     "implements": [
       "@antelopejs/interface-payment",
