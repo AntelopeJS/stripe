@@ -9,6 +9,8 @@
 
 The AntelopeJS Stripe provider implements portable payments and Stripe-native subscriptions with the official [`stripe`](https://github.com/stripe/stripe-node) SDK. It also implements the Stripe-specific API of `@antelopejs/interface-stripe`, with payment watchers and optional Redis fan-out.
 
+Part of [AntelopeJS](https://github.com/AntelopeJS/antelopejs), the TypeScript framework where modules depend on contracts and the application chooses the provider. Built by the team behind [AntelopeJS DMS](https://github.com/AntelopeJS/dms).
+
 ## Choose an interface
 
 | Consumer dependency                   | Use it for                                                                                                |
