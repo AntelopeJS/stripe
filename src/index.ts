@@ -9,6 +9,7 @@ import {
   ImplementInterface,
 } from "@antelopejs/interface-core";
 
+import { ReadRelay, RelayMessage } from "./relay";
 import {
   ClearAccounts,
   RegisterAccount,
@@ -35,12 +36,7 @@ interface Config extends Stripe.StripeConfig {
   accounts?: Record<string, AccountConfig>;
 }
 
-type RedisPaymentIntentChanges = {
-  messageId: string;
-  paymentIntent: Stripe.PaymentIntent;
-};
-
-const PAYMENT_INTENT_CHANGES_CHANNEL = "stripe:payment_intent:changes";
+const PAYMENT_INTENT_CHANGES_CHANNEL = "stripe:payment_intent:webhooks";
 const REDIS_INTERFACE = "@antelopejs/interface-redis";
 const API_INTERFACE = "@antelopejs/interface-api";
 const PROCESSED_MESSAGE_IDS_LIMIT = 1000;
@@ -138,23 +134,34 @@ export async function stop(): Promise<void> {
   }
 }
 
-function handlePaymentIntentChangesMessage(
-  _channel: string,
-  message: string,
-): void {
+async function relayPaymentIntentChange(message: string): Promise<void> {
   try {
-    const data = JSON.parse(message) as RedisPaymentIntentChanges;
-    if (processedMessageIds.has(data.messageId)) {
+    const relay = ReadRelay(message);
+    if (processedMessageIds.has(relay.messageId)) {
       return;
     }
-
-    internalv1.intentChanges.emit(data.paymentIntent, { local: false });
+    const event = await client.webhooks.constructEventAsync(
+      relay.payload,
+      relay.signature,
+      stripeConfig.webhookSecret,
+    );
+    const object = event.data.object;
+    if (object.object === "payment_intent") {
+      internalv1.intentChanges.emit(object, { local: false });
+    }
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     process.stderr.write(
       `Failed to process payment intent change from Redis: ${reason}\n`,
     );
   }
+}
+
+function handlePaymentIntentChangesMessage(
+  _channel: string,
+  message: string,
+): void {
+  void relayPaymentIntentChange(message);
 }
 
 const makeStripeController = (api: ApiModule, path: string) => {
@@ -186,10 +193,7 @@ const makeStripeController = (api: ApiModule, path: string) => {
 
           await redisClient.publish(
             PAYMENT_INTENT_CHANGES_CHANNEL,
-            JSON.stringify({
-              messageId,
-              paymentIntent: object,
-            }),
+            RelayMessage(messageId, body, signature),
           );
         }
       }

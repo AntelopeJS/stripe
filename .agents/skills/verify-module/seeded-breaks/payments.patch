@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/payments.ts b/src/implementations/payment/payments.ts
+index be6f8c0..2395f8f 100644
+--- a/src/implementations/payment/payments.ts
++++ b/src/implementations/payment/payments.ts
+@@ -35,7 +35,7 @@ function buildParams(
+ ): Stripe.PaymentIntentCreateParams {
+   const params: Stripe.PaymentIntentCreateParams = {
+     amount: request.amount.value,
+-    currency: request.amount.currency.toLowerCase(),
++    currency: request.amount.currency.toUpperCase(),
+     metadata: WriteMetadata(request.reference, request.metadata),
+     confirm: Boolean(request.paymentMethod),
+   };

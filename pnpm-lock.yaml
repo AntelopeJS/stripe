@@ -9,17 +9,17 @@ importers:
   .:
     dependencies:
       '@antelopejs/interface-core':
-        specifier: '>=0.2.4 <1.0.0'
-        version: 0.2.4
+        specifier: '>=0.4.0 <1.0.0'
+        version: 0.4.0
       '@antelopejs/interface-payment':
-        specifier: '>=0.1.0 <0.2.0'
-        version: 0.1.0(@antelopejs/interface-core@0.2.4)
+        specifier: '>=0.2.0 <0.3.0'
+        version: 0.2.0(@antelopejs/interface-core@0.4.0)
       '@antelopejs/interface-stripe':
         specifier: '>=0.0.6 <0.1.0'
-        version: 0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)
+        version: 0.0.6(@antelopejs/interface-core@0.4.0)(@types/node@22.19.15)
       '@antelopejs/interface-subscriptions':
         specifier: '>=0.1.0 <0.2.0'
-        version: 0.1.0(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4))
+        version: 0.1.0(@antelopejs/interface-core@0.4.0)(@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@0.4.0))
       stripe:
         specifier: ^18.5.0
         version: 18.5.0(@types/node@22.19.15)
@@ -28,8 +28,11 @@ importers:
         version: 11.1.0
     devDependencies:
       '@antelopejs/core':
-        specifier: ^1.16.0
-        version: 1.16.0
+        specifier: ^1.20.0
+        version: 1.20.0
+      '@antelopejs/redis':
+        specifier: ^1.0.4
+        version: 1.0.4(@types/ioredis-mock@8.2.8(ioredis@5.10.1))
       '@antelopejs/tooling-configs':
         specifier: ^0.2.17
         version: 0.2.17(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))
@@ -75,16 +78,16 @@ importers:
     optionalDependencies:
       '@antelopejs/interface-api':
         specifier: '>=0.0.15 <1.0.0'
-        version: 0.0.15(@antelopejs/interface-core@0.2.4)
+        version: 0.0.15(@antelopejs/interface-core@0.4.0)
       '@antelopejs/interface-redis':
         specifier: '>=0.0.9 <1.0.0'
-        version: 0.0.9(@antelopejs/interface-core@0.2.4)
+        version: 0.0.9(@antelopejs/interface-core@0.4.0)
 
 packages:
 
-  '@antelopejs/core@1.16.0':
-    resolution: {integrity: sha512-dj1R8xPgLzkTksfenPNh3kX1fffRnWktielk1yad/4/1wTEMhkPSx1WQ/4QI98d95L6Th0EMGTV/U4o84p/2yw==}
-    engines: {node: '>=20.19'}
+  '@antelopejs/core@1.20.0':
+    resolution: {integrity: sha512-7clqf/n8aUi4iCwMG0G2dWLQCwzy9ZxTLHLmOIEtfObw5wuN06s0+n57Zzjr3wbIyR2wD3Q4AeorqJ94QidIfg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
   '@antelopejs/interface-api@0.0.15':
@@ -92,13 +95,19 @@ packages:
     peerDependencies:
       '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
 
-  '@antelopejs/interface-core@0.2.4':
-    resolution: {integrity: sha512-2qF6/KwahCQvvNuC/piUvPWD4wq2Npmco941HMg2/bMBoJKbhMH16WcXXRvPYznNSkU0U+6vqK6KE+2N5NojSA==}
+  '@antelopejs/interface-core@0.4.0':
+    resolution: {integrity: sha512-IPX6dtt3KHknclN4mLOYeRYL2Odz1Pts+dtaZul62NghsBUX/0OFHD4Qhoaf+Beva4hjInbaF918ajr4Z5HVWQ==}
 
-  '@antelopejs/interface-payment@0.1.0':
-    resolution: {integrity: sha512-n3AfzR73ApPqhRw/iHVWf7A9jadHCSLDTrSDnyGsxqG1ydYEaUfPjfIX56PU1RsrPi8O+FXCiYZcuG8jdEL2Mw==}
+  '@antelopejs/interface-payment@0.2.0':
+    resolution: {integrity: sha512-HvwSFYdvDxh6EfXgwJ09cd5B4qbrIM4N2DLJbPg4ZeerMPL5PT0srRc2JYIGwJIa2X24SOW9jALE8sCO96vnxg==}
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.3 <1.0.0'
+
+  '@antelopejs/interface-redis-scheduler@0.0.9':
+    resolution: {integrity: sha512-cjMgKmJFrjzo0ZcA+08tiPH+KrAWRJQr2f+k51srbf7pApPcPgW7y96N53OKdxadD9FZw+UxYJIJcFM1nw8CBw==}
+    peerDependencies:
+      '@antelopejs/interface-core': '>=0.2.4 <1.0.0'
+      '@antelopejs/interface-redis': '>=0.0.9 <1.0.0'
 
   '@antelopejs/interface-redis@0.0.9':
     resolution: {integrity: sha512-lI1zcm2J13tP4D/QKmsdKFBRIzjZ/GdG4z27uaOp/3yKPA3RkH5YgpzFm9pgBa353UIhgZDuVkozFJcFkqewUA==}
@@ -115,6 +124,9 @@ packages:
     peerDependencies:
       '@antelopejs/interface-core': '>=0.0.5 <1.0.0'
       '@antelopejs/interface-payment': '>=0.0.2 <1.0.0'
+
+  '@antelopejs/redis@1.0.4':
+    resolution: {integrity: sha512-FCjgCuaBEnMDNN1Ms78MgOIbfLV2MpsAIZxTP/BvczObTUCucprZJGPkTkqFqpe/gRjXAkdI6fjKRbkgVMo+Ug==}
 
   '@antelopejs/tooling-configs@0.2.17':
     resolution: {integrity: sha512-8fwh7xQPzazP/l/ivEwRKpfN8qShV9+PRizpI9cBewe2TwoRPu4n95w6sYSlygiRmm0HxLJYZFhmSPRgtiNo1Q==}
@@ -344,6 +356,9 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@ioredis/as-callback@3.0.0':
+    resolution: {integrity: sha512-Kqv1rZ3WbgOrS+hgzJ5xG5WQuhvzzSTRYvNeyPMLOAM78MHSnuKI20JeJGbpuAt//LCuP0vsexZcorqW7kWhJg==}
 
   '@ioredis/commands@1.5.1':
     resolution: {integrity: sha512-JH8ZL/ywcJyR9MmJ5BNqZllXNZQqQbnVZOqpPQqE1vHiFgAw4NHbvE0FOduNU8IX9babitBT46571OnPTT0Zcw==}
@@ -917,6 +932,11 @@ packages:
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
+  '@types/ioredis-mock@8.2.8':
+    resolution: {integrity: sha512-Nxr1CXk8NtGVzWQ8WoGCOyo+HARd4CFc/Nt2+ITt3WWLNlj1InW38SzZwOJNqzA38iplrpBFp6Ny4KjPfeI+bA==}
+    peerDependencies:
+      ioredis: ^5
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -1437,6 +1457,14 @@ packages:
       picomatch:
         optional: true
 
+  fengari-interop@0.1.4:
+    resolution: {integrity: sha512-4/CW/3PJUo3ebD4ACgE1g/3NGEYSq7OQAyETyypsAl/WeySDBbxExikkayNkZzbpgyC9GyJp8v1DU2VOXxNq7Q==}
+    peerDependencies:
+      fengari: ^0.1.0
+
+  fengari@0.1.5:
+    resolution: {integrity: sha512-0DS4Nn4rV8qyFlQCpKK8brT61EUtswynrpfFTcgLErcilBIBskSMQ86fO2WVuybr14ywyKdRjv91FiRZwnEuvQ==}
+
   file-entry-cache@11.1.5:
     resolution: {integrity: sha512-+PFTHITI08JIGhnNpGNI8T8inUpgZfk3GNEqfT9R2zZV2iFXg3CvqzSl/uEhs7TSGujYRELEANyDvS8Fj7+S7Q==}
 
@@ -1635,6 +1663,13 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  ioredis-mock@8.13.1:
+    resolution: {integrity: sha512-Wsi50AU+cMiI32nAgfwpUaJVBtb4iQdVsOHl9M6R3tePCO/8vGsToCVIG82XWAxN4Se55TZoOzVseu+QngFLyw==}
+    engines: {node: '>=12.22'}
+    peerDependencies:
+      '@types/ioredis-mock': ^8
+      ioredis: ^5
 
   ioredis@5.10.1:
     resolution: {integrity: sha512-HuEDBTI70aYdx1v6U97SbNx9F1+svQKBDo30o0b9fw055LMepzpOOd0Ccg9Q6tbqmBSJaMuY0fB7yw9/vjBYCA==}
@@ -2251,6 +2286,10 @@ packages:
     resolution: {integrity: sha512-9u/XQ1pvrQtYyMpZe7DXKv2p5CNvyVwzUB6uhLAnQwHMSgKMBR62lc7AHljaeteeHXn11XTAaLLUVZYVZyuRBQ==}
     engines: {node: '>= 20.19.0'}
 
+  readline-sync@1.4.10:
+    resolution: {integrity: sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==}
+    engines: {node: '>= 0.8.0'}
+
   redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
     engines: {node: '>=4'}
@@ -2389,6 +2428,9 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
 
+  sprintf-js@1.1.3:
+    resolution: {integrity: sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA==}
+
   standard-as-callback@2.1.0:
     resolution: {integrity: sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==}
 
@@ -2496,6 +2538,10 @@ packages:
   tinypool@2.1.0:
     resolution: {integrity: sha512-Pugqs6M0m7Lv1I7FtxN4aoyToKg1C4tu+/381vH35y8oENM/Ai7f7C4StcoK4/+BSw9ebcS8jRiVrORFKCALLw==}
     engines: {node: ^20.0.0 || >=22.0.0}
+
+  tmp@0.2.7:
+    resolution: {integrity: sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13ZeIcZnDg/QpSuU2zfZ3rzwY8ukEnaXw==}
+    engines: {node: '>=14.14'}
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -2660,9 +2706,9 @@ packages:
 
 snapshots:
 
-  '@antelopejs/core@1.16.0':
+  '@antelopejs/core@1.20.0':
     dependencies:
-      '@antelopejs/interface-core': 0.2.4
+      '@antelopejs/interface-core': 0.4.0
       '@clack/prompts': 1.8.1
       '@types/proper-lockfile': 4.1.4
       commander: 13.1.0
@@ -2675,38 +2721,56 @@ snapshots:
       semver: 7.8.5
       typescript: 5.9.3
 
-  '@antelopejs/interface-api@0.0.15(@antelopejs/interface-core@0.2.4)':
+  '@antelopejs/interface-api@0.0.15(@antelopejs/interface-core@0.4.0)':
     dependencies:
-      '@antelopejs/interface-core': 0.2.4
+      '@antelopejs/interface-core': 0.4.0
     optional: true
 
-  '@antelopejs/interface-core@0.2.4':
+  '@antelopejs/interface-core@0.4.0':
     dependencies:
       reflect-metadata: 0.2.2
 
-  '@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4)':
+  '@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@0.4.0)':
     dependencies:
-      '@antelopejs/interface-core': 0.2.4
+      '@antelopejs/interface-core': 0.4.0
 
-  '@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.2.4)':
+  '@antelopejs/interface-redis-scheduler@0.0.9(@antelopejs/interface-core@0.4.0)(@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.4.0))':
     dependencies:
-      '@antelopejs/interface-core': 0.2.4
+      '@antelopejs/interface-core': 0.4.0
+      '@antelopejs/interface-redis': 0.0.9(@antelopejs/interface-core@0.4.0)
       ioredis: 5.10.1
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
-  '@antelopejs/interface-stripe@0.0.6(@antelopejs/interface-core@0.2.4)(@types/node@22.19.15)':
+  '@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.4.0)':
     dependencies:
-      '@antelopejs/interface-core': 0.2.4
+      '@antelopejs/interface-core': 0.4.0
+      ioredis: 5.10.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@antelopejs/interface-stripe@0.0.6(@antelopejs/interface-core@0.4.0)(@types/node@22.19.15)':
+    dependencies:
+      '@antelopejs/interface-core': 0.4.0
       stripe: 18.5.0(@types/node@22.19.15)
     transitivePeerDependencies:
       - '@types/node'
 
-  '@antelopejs/interface-subscriptions@0.1.0(@antelopejs/interface-core@0.2.4)(@antelopejs/interface-payment@0.1.0(@antelopejs/interface-core@0.2.4))':
+  '@antelopejs/interface-subscriptions@0.1.0(@antelopejs/interface-core@0.4.0)(@antelopejs/interface-payment@0.2.0(@antelopejs/interface-core@0.4.0))':
     dependencies:
-      '@antelopejs/interface-core': 0.2.4
-      '@antelopejs/interface-payment': 0.1.0(@antelopejs/interface-core@0.2.4)
+      '@antelopejs/interface-core': 0.4.0
+      '@antelopejs/interface-payment': 0.2.0(@antelopejs/interface-core@0.4.0)
+
+  '@antelopejs/redis@1.0.4(@types/ioredis-mock@8.2.8(ioredis@5.10.1))':
+    dependencies:
+      '@antelopejs/interface-core': 0.4.0
+      '@antelopejs/interface-redis': 0.0.9(@antelopejs/interface-core@0.4.0)
+      '@antelopejs/interface-redis-scheduler': 0.0.9(@antelopejs/interface-core@0.4.0)(@antelopejs/interface-redis@0.0.9(@antelopejs/interface-core@0.4.0))
+      ioredis: 5.10.1
+      ioredis-mock: 8.13.1(@types/ioredis-mock@8.2.8(ioredis@5.10.1))(ioredis@5.10.1)
+    transitivePeerDependencies:
+      - '@types/ioredis-mock'
+      - supports-color
 
   '@antelopejs/tooling-configs@0.2.17(eslint-plugin-perfectionist@5.11.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(knip@6.34.0)(oxfmt@0.66.0)(oxlint@1.81.0(oxlint-tsgolint@7.0.2001))':
     dependencies:
@@ -2931,8 +2995,9 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.19.15
 
-  '@ioredis/commands@1.5.1':
-    optional: true
+  '@ioredis/as-callback@3.0.0': {}
+
+  '@ioredis/commands@1.5.1': {}
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -3295,6 +3360,10 @@ snapshots:
 
   '@types/estree@1.0.9': {}
 
+  '@types/ioredis-mock@8.2.8(ioredis@5.10.1)':
+    dependencies:
+      ioredis: 5.10.1
+
   '@types/json-schema@7.0.15': {}
 
   '@types/mocha@10.0.10': {}
@@ -3606,8 +3675,7 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  cluster-key-slot@1.1.2:
-    optional: true
+  cluster-key-slot@1.1.2: {}
 
   color-convert@2.0.1:
     dependencies:
@@ -3670,8 +3738,7 @@ snapshots:
       escodegen: 2.1.0
       esprima: 4.0.1
 
-  denque@2.1.0:
-    optional: true
+  denque@2.1.0: {}
 
   destr@2.0.5: {}
 
@@ -3851,6 +3918,16 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
       picomatch: 4.0.7
+
+  fengari-interop@0.1.4(fengari@0.1.5):
+    dependencies:
+      fengari: 0.1.5
+
+  fengari@0.1.5:
+    dependencies:
+      readline-sync: 1.4.10
+      sprintf-js: 1.1.3
+      tmp: 0.2.7
 
   file-entry-cache@11.1.5:
     dependencies:
@@ -4084,6 +4161,16 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.19.15
 
+  ioredis-mock@8.13.1(@types/ioredis-mock@8.2.8(ioredis@5.10.1))(ioredis@5.10.1):
+    dependencies:
+      '@ioredis/as-callback': 3.0.0
+      '@ioredis/commands': 1.5.1
+      '@types/ioredis-mock': 8.2.8(ioredis@5.10.1)
+      fengari: 0.1.5
+      fengari-interop: 0.1.4(fengari@0.1.5)
+      ioredis: 5.10.1
+      semver: 7.8.5
+
   ioredis@5.10.1:
     dependencies:
       '@ioredis/commands': 1.5.1
@@ -4097,7 +4184,6 @@ snapshots:
       standard-as-callback: 2.1.0
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   ip-address@10.1.0: {}
 
@@ -4270,13 +4356,11 @@ snapshots:
 
   lodash.capitalize@4.2.1: {}
 
-  lodash.defaults@4.2.0:
-    optional: true
+  lodash.defaults@4.2.0: {}
 
   lodash.escaperegexp@4.1.2: {}
 
-  lodash.isarguments@3.1.0:
-    optional: true
+  lodash.isarguments@3.1.0: {}
 
   lodash.isplainobject@4.0.6: {}
 
@@ -4778,13 +4862,13 @@ snapshots:
 
   readdirp@5.0.0: {}
 
-  redis-errors@1.2.0:
-    optional: true
+  readline-sync@1.4.10: {}
+
+  redis-errors@1.2.0: {}
 
   redis-parser@3.0.0:
     dependencies:
       redis-errors: 1.2.0
-    optional: true
 
   reflect-metadata@0.2.2: {}
 
@@ -4932,8 +5016,9 @@ snapshots:
   source-map@0.6.1:
     optional: true
 
-  standard-as-callback@2.1.0:
-    optional: true
+  sprintf-js@1.1.3: {}
+
+  standard-as-callback@2.1.0: {}
 
   std-env@3.10.0: {}
 
@@ -5044,6 +5129,8 @@ snapshots:
       picomatch: 4.0.7
 
   tinypool@2.1.0: {}
+
+  tmp@0.2.7: {}
 
   to-regex-range@5.0.1:
     dependencies:

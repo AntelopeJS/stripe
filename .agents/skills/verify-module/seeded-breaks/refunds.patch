@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/refunds.ts b/src/implementations/payment/refunds.ts
+index c52e803..d9767da 100644
+--- a/src/implementations/payment/refunds.ts
++++ b/src/implementations/payment/refunds.ts
+@@ -54,7 +54,7 @@ function refundParams(request: RefundRequest): Stripe.RefundCreateParams {
+       ...reasonMetadata(request.reason),
+     }),
+   };
+-  if (request.amount) params.amount = request.amount.value;
++  if (request.amount) params.amount = request.amount.value * 2;
+   return { ...params, ...toReason(request.reason) };
+ }
+ 

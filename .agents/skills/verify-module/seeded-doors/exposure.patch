@@ -1,0 +1,12 @@
+diff --git a/src/implementations/payment/webhooks.ts b/src/implementations/payment/webhooks.ts
+index e390e02..483fc64 100644
+--- a/src/implementations/payment/webhooks.ts
++++ b/src/implementations/payment/webhooks.ts
+@@ -118,6 +118,7 @@ async function verifiedEvent(
+       payload,
+       signature,
+       webhookSecret,
++      Number.MAX_SAFE_INTEGER,
+     );
+   } catch (error) {
+     throw new WebhookVerificationError(

@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/customers.ts b/src/implementations/payment/customers.ts
+index d7f664b..7b67e24 100644
+--- a/src/implementations/payment/customers.ts
++++ b/src/implementations/payment/customers.ts
+@@ -26,7 +26,7 @@ function toCustomer(customer: Stripe.Customer): Customer {
+ 
+ function customerParams(request: CustomerRequest): Stripe.CustomerCreateParams {
+   const params: Stripe.CustomerCreateParams = {};
+-  if (request.email) params.email = request.email;
++  if (request.email) params.email = request.email.toUpperCase();
+   if (request.name) params.name = request.name;
+   if (request.metadata) params.metadata = request.metadata;
+   return params;

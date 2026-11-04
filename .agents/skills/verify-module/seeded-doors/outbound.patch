@@ -1,0 +1,13 @@
+diff --git a/src/index.ts b/src/index.ts
+index 2eeb761..f838a04 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -70,7 +70,7 @@ function registerAccounts(config: Config, options: Stripe.StripeConfig): void {
+ export async function construct(config: Config): Promise<void> {
+   stripeConfig = config;
+   const options = clientOptions(config);
+-  client = new Stripe(stripeConfig.apiKey, options);
++  client = new Stripe(stripeConfig.apiKey, { ...options, maxNetworkRetries: 5 });
+   registerAccounts(config, options);
+ 
+   ImplementInterface(payment, await import("./implementations/payment"));

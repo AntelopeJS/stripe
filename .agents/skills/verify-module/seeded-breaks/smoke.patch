@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/payments.ts b/src/implementations/payment/payments.ts
+index be6f8c0..419caca 100644
+--- a/src/implementations/payment/payments.ts
++++ b/src/implementations/payment/payments.ts
+@@ -37,7 +37,7 @@ function buildParams(
+     amount: request.amount.value,
+     currency: request.amount.currency.toLowerCase(),
+     metadata: WriteMetadata(request.reference, request.metadata),
+-    confirm: Boolean(request.paymentMethod),
++    confirm: false,
+   };
+   if (request.authorizeOnly) params.capture_method = "manual";
+   if (request.paymentMethod) params.payment_method = request.paymentMethod;

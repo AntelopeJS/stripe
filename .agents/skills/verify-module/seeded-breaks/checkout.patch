@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/checkout.ts b/src/implementations/payment/checkout.ts
+index e280387..e5a26d6 100644
+--- a/src/implementations/payment/checkout.ts
++++ b/src/implementations/payment/checkout.ts
+@@ -86,7 +86,7 @@ export async function CreateCheckoutSession(
+     managed_payments: { enabled: false },
+     line_items: [lineItem(request)],
+     success_url: request.successUrl,
+-    cancel_url: request.cancelUrl,
++    cancel_url: request.successUrl,
+     metadata: WriteMetadata(request.reference, request.metadata),
+     payment_intent_data: paymentIntentData,
+   };

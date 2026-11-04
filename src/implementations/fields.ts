@@ -1,10 +1,10 @@
 function isKeyOf<T extends object>(table: T, key: PropertyKey): key is keyof T {
-  return key in table;
+  return Object.prototype.hasOwnProperty.call(table, key);
 }
 
 /**
- * Reads `table[key]` the way plain indexing does, inherited keys included, and
- * returns `undefined` for a key the table does not have.
+ * Reads `table[key]` for an own key of the table, and returns `undefined` for
+ * any other key, inherited `Object.prototype` members included.
  */
 export function Lookup<T extends object>(
   table: T,

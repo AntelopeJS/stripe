@@ -91,10 +91,7 @@ export async function CreateCheckoutSession(
     payment_intent_data: paymentIntentData,
   };
   if (request.customer) params.customer = request.customer;
-  if (request.locale) {
-    params.locale =
-      request.locale as Stripe.Checkout.SessionCreateParams.Locale;
-  }
+  if (request.locale) params.locale = request.locale;
   return Translating("", SESSION_ENTITY, async () =>
     toSession(
       await client.checkout.sessions.create(params, { idempotencyKey }),

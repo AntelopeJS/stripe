@@ -8,7 +8,8 @@ import {
 const SECOND_MS = 1000;
 const signer = new Stripe("sk_test_unused_for_signing_only");
 
-function signed(
+/** A Stripe delivery's raw payload and the `stripe-signature` header Stripe would send with it. */
+export function SignedPayload(
   type: string,
   object: Stripe.Event.Data.Object,
   secret: string,
@@ -31,7 +32,7 @@ export function SignedWebhook(
   object: Stripe.Event.Data.Object,
   secret: string,
 ): WebhookRequest {
-  const { payload, signature } = signed(type, object, secret);
+  const { payload, signature } = SignedPayload(type, object, secret);
   return {
     body: Buffer.from(payload),
     headers: { "stripe-signature": signature },
@@ -44,7 +45,7 @@ export function SignedEvent(
   object: Stripe.Event.Data.Object,
   secret: string,
 ): Stripe.Event {
-  const { payload, signature } = signed(type, object, secret);
+  const { payload, signature } = SignedPayload(type, object, secret);
   return signer.webhooks.constructEvent(payload, signature, secret);
 }
 

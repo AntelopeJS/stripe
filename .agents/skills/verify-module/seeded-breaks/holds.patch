@@ -1,0 +1,13 @@
+diff --git a/src/implementations/payment/payments.ts b/src/implementations/payment/payments.ts
+index be6f8c0..f99e09a 100644
+--- a/src/implementations/payment/payments.ts
++++ b/src/implementations/payment/payments.ts
+@@ -116,7 +116,7 @@ export async function CapturePayment(
+   return Translating(id, PAYMENT_ENTITY, async () => {
+     await client.paymentIntents.capture(
+       id,
+-      amount ? { amount_to_capture: amount.value } : {},
++      {},
+       { idempotencyKey },
+     );
+     return ToPayment(
