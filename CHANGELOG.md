@@ -1,5 +1,30 @@
 # Changelog
 
+## v1.2.1
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v1.2.0...v1.2.1)
+
+### 🩹 Fixes
+
+- **deps:** Update qs and uuid to resolve runtime advisories ([#59](https://github.com/AntelopeJS/stripe/pull/59))
+
+### 📦 Build
+
+- **deps:** Bump @antelopejs packages to the 2026-11-06 releases ([#61](https://github.com/AntelopeJS/stripe/pull/61))
+
+### 🏡 Chore
+
+- **verify:** Remove seeded runs from the verification skill ([#57](https://github.com/AntelopeJS/stripe/pull/57))
+- **ci:** Remove the weekly mutation caller ([#58](https://github.com/AntelopeJS/stripe/pull/58))
+
+### 🤖 CI
+
+- Call ci-node.yml@v1 ([#60](https://github.com/AntelopeJS/stripe/pull/60))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli ([@Upd4ting](http://github.com/Upd4ting))
+
 ## v1.2.0
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v1.1.0...v1.2.0)
