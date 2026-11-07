@@ -30,12 +30,12 @@
     "provenance": true
   },
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist && tsc --skipLibCheck",
     "format": "oxfmt .",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "prepack": "pnpm run build",
-    "release": "pnpm run lint && pnpm run test && pnpm run prepack && release-it",
+    "release": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run prepack && release-it",
     "test": "pnpm run build && ajs module test . -f dist/test/provider-regressions.test.js -f dist/test/webhook-events.test.js -f dist/test/interface-stripe.test.js -f dist/test/redis-relay.test.js",
     "test:stripe": "pnpm run build && ANTELOPE_STRIPE_TEST_MODE=live ajs module test .",
     "typecheck": "tsc --noEmit",
