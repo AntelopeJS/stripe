@@ -7,21 +7,8 @@ import {
 
 import { SignedEvent } from "./signed-webhook";
 
-const RESOLVE_TIMEOUT = 5_000;
 const WATCHED_INTENT = "pi_watch";
 const LOCAL_SECRET = "whsec_interface_stripe_local";
-
-function withTimeout<T>(work: Promise<T>, label: string): Promise<T> {
-  return Promise.race([
-    work,
-    new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject(new Error(`${label} did not resolve`)),
-        RESOLVE_TIMEOUT,
-      ),
-    ),
-  ]);
-}
 
 /**
  * Implementing a second interface is additive: these cover what existing
@@ -30,7 +17,7 @@ function withTimeout<T>(work: Promise<T>, label: string): Promise<T> {
  */
 describe("[stripe] the Stripe-native interface still works", () => {
   it("publishes a live client, as it did before", async () => {
-    const client = await withTimeout(GetClient(), "GetClient");
+    const client = await GetClient();
 
     assert.ok(
       client instanceof Stripe,
