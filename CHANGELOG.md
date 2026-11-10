@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.2.2
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v1.2.1...v1.2.2)
+
+### 🔥 Performance
+
+- **build:** Skip the lib check in build, typecheck keeps it ([#62](https://github.com/AntelopeJS/stripe/pull/62))
+- **test:** Drop the interface-stripe timeout that held the run open ([#63](https://github.com/AntelopeJS/stripe/pull/63))
+- **webhooks:** Fetch independent Stripe reads concurrently ([#67](https://github.com/AntelopeJS/stripe/pull/67))
+
+### 📦 Build
+
+- **deps:** Bump @antelopejs/tooling-configs to 0.4.0 ([#64](https://github.com/AntelopeJS/stripe/pull/64))
+- **deps:** Bump @antelopejs/tooling-configs to 0.5.0 ([#65](https://github.com/AntelopeJS/stripe/pull/65))
+- **deps:** Bump @antelopejs/tooling-configs to 0.5.1 ([#66](https://github.com/AntelopeJS/stripe/pull/66))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli ([@Upd4ting](http://github.com/Upd4ting))
+
 ## v1.2.1
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v1.2.0...v1.2.1)
