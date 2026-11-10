@@ -4,11 +4,10 @@ import { SUBSCRIPTION_METADATA_KEY } from "@antelopejs/interface-subscriptions";
 
 import { SubscriptionOfPayment } from "../subscriptions/events";
 
-export async function MarkSubscriptionCharge(
-  client: Stripe,
+export function MarkSubscription(
   payment: Payment,
-): Promise<Payment> {
-  const subscription = await SubscriptionOfPayment(client, payment.id);
+  subscription: string | undefined,
+): Payment {
   if (!subscription) return payment;
   return {
     ...payment,
@@ -17,4 +16,14 @@ export async function MarkSubscriptionCharge(
       [SUBSCRIPTION_METADATA_KEY]: subscription,
     },
   };
+}
+
+export async function MarkSubscriptionCharge(
+  client: Stripe,
+  payment: Payment,
+): Promise<Payment> {
+  return MarkSubscription(
+    payment,
+    await SubscriptionOfPayment(client, payment.id),
+  );
 }

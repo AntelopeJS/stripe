@@ -8,8 +8,11 @@ import type {
 
 import { GetAccount } from "./accounts";
 import { IsStripeId } from "../fields";
-import { MarkSubscriptionCharge } from "./subscription-marker";
-import { DispatchSubscriptionEvent } from "../subscriptions/events";
+import { MarkSubscription } from "./subscription-marker";
+import {
+  DispatchSubscriptionEvent,
+  SubscriptionOfPayment,
+} from "../subscriptions/events";
 import { ToDispute, ToEpochMillis, ToPayment, ToRefund } from "./mapping";
 
 const SIGNATURE_HEADER = "stripe-signature";
@@ -75,11 +78,14 @@ async function buildEvent(
 
   if (isEventIn(PAYMENT_EVENTS, event)) {
     const paymentType = PAYMENT_EVENTS[event.type];
-    const intent = await withRefundedTotal(client, event.data.object);
+    const [intent, subscription] = await Promise.all([
+      withRefundedTotal(client, event.data.object),
+      SubscriptionOfPayment(client, event.data.object.id),
+    ]);
     return {
       ...base,
       type: paymentType,
-      payment: await MarkSubscriptionCharge(client, ToPayment(intent)),
+      payment: MarkSubscription(ToPayment(intent), subscription),
     };
   }
 
