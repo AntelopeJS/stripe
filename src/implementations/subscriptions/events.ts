@@ -81,10 +81,12 @@ function fromInvoice(type: SubscriptionEventType): Builder {
       type === "subscription.payment_succeeded" &&
       invoice.amount_paid === NO_CHARGE;
     if (!subscription || isFreePeriod) return undefined;
-    const payment = await PaymentOfInvoice(client, invoice.id);
-    const current = await client.subscriptions.retrieve(subscription, {
-      expand: EXPAND_LATEST_PAYMENT,
-    });
+    const [payment, current] = await Promise.all([
+      PaymentOfInvoice(client, invoice.id),
+      client.subscriptions.retrieve(subscription, {
+        expand: EXPAND_LATEST_PAYMENT,
+      }),
+    ]);
     const built: SubscriptionEvent = {
       id: event.id,
       type,
