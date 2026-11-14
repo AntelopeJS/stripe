@@ -75,12 +75,12 @@ Store the session ID and redirect the payer to `redirectUrl`. A browser return d
 
 | Package                               | Supported         | Tested with |
 | ------------------------------------- | ----------------- | ----------- |
-| `@antelopejs/interface-api`           | `>=0.0.15 <1.0.0` | `0.0.15`    |
-| `@antelopejs/interface-core`          | `>=0.4.0 <1.0.0`  | `0.4.0`     |
-| `@antelopejs/interface-payment`       | `>=0.2.0 <0.3.0`  | `0.2.0`     |
-| `@antelopejs/interface-redis`         | `>=0.0.9 <1.0.0`  | `0.0.9`     |
-| `@antelopejs/interface-stripe`        | `>=0.0.6 <0.1.0`  | `0.0.6`     |
-| `@antelopejs/interface-subscriptions` | `>=0.1.0 <0.2.0`  | `0.1.0`     |
+| `@antelopejs/interface-api`           | `>=0.3.3 <0.4.0`  | `0.3.3`     |
+| `@antelopejs/interface-core`          | `>=0.5.1 <0.6.0`  | `0.5.1`     |
+| `@antelopejs/interface-payment`       | `>=0.2.1 <0.3.0`  | `0.2.1`     |
+| `@antelopejs/interface-redis`         | `>=0.0.10 <0.1.0` | `0.0.10`    |
+| `@antelopejs/interface-stripe`        | `>=0.0.7 <0.1.0`  | `0.0.7`     |
+| `@antelopejs/interface-subscriptions` | `>=0.1.2 <0.2.0`  | `0.1.2`     |
 
 <!-- antelopejs-docs-compat:end -->
 
