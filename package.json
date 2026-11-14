@@ -50,17 +50,17 @@
     "suppressions:update": "antelopejs-suppressions --update"
   },
   "dependencies": {
-    "@antelopejs/interface-core": ">=0.4.0 <1.0.0",
-    "@antelopejs/interface-payment": ">=0.2.0 <0.3.0",
-    "@antelopejs/interface-stripe": ">=0.0.6 <0.1.0",
-    "@antelopejs/interface-subscriptions": ">=0.1.0 <0.2.0",
+    "@antelopejs/interface-core": ">=0.5.1 <0.6.0",
+    "@antelopejs/interface-payment": ">=0.2.1 <0.3.0",
+    "@antelopejs/interface-stripe": ">=0.0.7 <0.1.0",
+    "@antelopejs/interface-subscriptions": ">=0.1.2 <0.2.0",
     "stripe": "^18.5.0",
     "uuid": "11.1.1"
   },
   "devDependencies": {
-    "@antelopejs/core": "^1.21.0",
-    "@antelopejs/redis": "^1.0.4",
-    "@antelopejs/tooling-configs": "^0.5.8",
+    "@antelopejs/core": "~1.23.3",
+    "@antelopejs/redis": "~1.1.1",
+    "@antelopejs/tooling-configs": ">=0.7.1 <0.8.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.15",
     "@types/uuid": "10.0.0",
@@ -76,8 +76,8 @@
     "typescript": "^5.9.3"
   },
   "optionalDependencies": {
-    "@antelopejs/interface-api": ">=0.0.15 <1.0.0",
-    "@antelopejs/interface-redis": ">=0.0.9 <1.0.0"
+    "@antelopejs/interface-api": ">=0.3.3 <0.4.0",
+    "@antelopejs/interface-redis": ">=0.0.10 <0.1.0"
   },
   "packageManager": "pnpm@10.6.5",
   "antelopeJs": {
