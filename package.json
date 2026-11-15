@@ -60,7 +60,7 @@
   "devDependencies": {
     "@antelopejs/core": "~1.23.3",
     "@antelopejs/redis": "~1.1.1",
-    "@antelopejs/tooling-configs": ">=0.7.1 <0.8.0",
+    "@antelopejs/tooling-configs": ">=0.8.0 <0.9.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.15",
     "@types/uuid": "10.0.0",
