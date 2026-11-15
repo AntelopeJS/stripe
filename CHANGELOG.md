@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.2.3
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v1.2.2...v1.2.3)
+
+### 📖 Documentation
+
+- **readme:** Adopt the AntelopeJS framework README style ([#68](https://github.com/AntelopeJS/stripe/pull/68))
+
+### 📦 Build
+
+- **deps:** Move to tooling-configs 0.7.1 and cap @antelopejs ranges below the next minor ([#70](https://github.com/AntelopeJS/stripe/pull/70))
+- Move to @antelopejs/tooling-configs 0.8 and the three-tier CI ([#71](https://github.com/AntelopeJS/stripe/pull/71))
+
+### 🤖 CI
+
+- Run the checks on Windows beside Linux ([#69](https://github.com/AntelopeJS/stripe/pull/69))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli
+
 ## v1.2.2
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v1.2.1...v1.2.2)
