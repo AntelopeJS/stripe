@@ -2,16 +2,19 @@ name: CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
-    branches: [main]
-  workflow_dispatch: null
+    branches: [next]
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   ci:
-    uses: AntelopeJS/.github/.github/workflows/ci-node.yml@v1
+    uses: AntelopeJS/.github/.github/workflows/ci-node.yml@v2
     with:
       docs-files: |
         README.md
@@ -19,7 +22,6 @@ jobs:
       docs-typescript-project: docs/tsconfig.json
       renovate-sync: false
       test-job: true
-      windows: true
     permissions:
       contents: read
   renovate-sync:
@@ -28,4 +30,4 @@ jobs:
     permissions:
       contents: write
       actions: write
-    uses: AntelopeJS/.github/.github/workflows/ci-renovate-sync.yml@v1
+    uses: AntelopeJS/.github/.github/workflows/ci-renovate-sync.yml@v2
