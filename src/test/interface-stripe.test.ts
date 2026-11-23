@@ -10,11 +10,6 @@ import { SignedEvent } from "./signed-webhook";
 const WATCHED_INTENT = "pi_watch";
 const LOCAL_SECRET = "whsec_interface_stripe_local";
 
-/**
- * Implementing a second interface is additive: these cover what existing
- * consumers of `@antelopejs/interface-stripe` depend on from this module, so a
- * regression shows up here rather than in someone's deployment.
- */
 describe("[stripe] the Stripe-native interface still works", () => {
   it("publishes a live client, as it did before", async () => {
     const client = await GetClient();

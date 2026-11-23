@@ -149,7 +149,8 @@ describe("[stripe] subscriptions on a test clock", function () {
     assert.equal(renewed.status, "active");
     assert.equal(renewed.currentPeriodStart, created.currentPeriodEnd);
     assert.notEqual(renewed.latestPayment, created.latestPayment);
-    const payment = await GetPayment(renewed.latestPayment!);
+    assert.ok(renewed.latestPayment);
+    const payment = await GetPayment(renewed.latestPayment);
     assert.equal(payment.status, "succeeded");
     assert.equal(payment.metadata?.[SUBSCRIPTION_METADATA_KEY], created.id);
   });
