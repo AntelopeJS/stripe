@@ -150,7 +150,8 @@ describe("[stripe] subscription events from webhooks", function () {
 
   it("marks the subscription's charge in its payment webhook", async () => {
     const created = await subscribe();
-    const intent = await client.paymentIntents.retrieve(created.latestPayment!);
+    assert.ok(created.latestPayment);
+    const intent = await client.paymentIntents.retrieve(created.latestPayment);
 
     const answer = await deliver("payment_intent.succeeded", intent);
 
