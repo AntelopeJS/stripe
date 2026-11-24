@@ -12,7 +12,7 @@ import {
   ValidateSubscriptionRequest,
 } from "@antelopejs/interface-subscriptions";
 
-import { IsStripeId } from "../fields";
+import { IsStripeId, Lookup } from "../fields";
 import { SubscriptionProduct } from "./product";
 import { GetAccount } from "../payment/accounts";
 import { IsOwnSubscription, ToSubscription } from "./mapping";
@@ -224,7 +224,7 @@ export async function CancelSubscription(
   timing: CancellationTiming,
   provider?: string,
 ): Promise<Subscription> {
-  const cancel = CANCELLATIONS[timing];
+  const cancel = Lookup(CANCELLATIONS, timing);
   if (!cancel) {
     throw new InvalidSubscriptionRequestError(
       `Unknown cancellation timing: ${timing}`,
