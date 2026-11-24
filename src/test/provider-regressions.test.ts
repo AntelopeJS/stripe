@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   InvalidSubscriptionRequestError,
   SubscriptionError,
+  type Subscription,
   SubscriptionPaymentError,
   type SubscriptionRequest,
 } from "@antelopejs/interface-subscriptions";
@@ -14,7 +15,10 @@ import { Lookup } from "../implementations/fields";
 import { VerifyWebhook } from "../implementations/payment/webhooks";
 import { RegisterAccount } from "../implementations/payment/accounts";
 import { CreateCheckoutSession } from "../implementations/payment/checkout";
-import { CreateSubscription } from "../implementations/subscriptions/subscriptions";
+import {
+  CancelSubscription,
+  CreateSubscription,
+} from "../implementations/subscriptions/subscriptions";
 
 const PROVIDER = "provider-regression-tests";
 const SECRET = "provider-regression-signing-secret";
@@ -315,5 +319,25 @@ describe("[stripe] reading lookup tables", () => {
   it("answers nothing for an Object.prototype member", () => {
     assert.equal(Lookup(table, "constructor"), undefined);
     assert.equal(Lookup(table, "toString"), undefined);
+  });
+});
+
+/** Method syntax types its parameters bivariantly, so a caller beyond the type system can pass any string. */
+interface UntypedCancel {
+  cancel(
+    id: string,
+    idempotencyKey: string,
+    timing: string,
+    provider: string,
+  ): Promise<Subscription>;
+}
+
+describe("[stripe] cancelling a subscription with an unknown timing", () => {
+  it("rejects an Object.prototype member as the timing", async () => {
+    const untyped: UntypedCancel = { cancel: CancelSubscription };
+    await assert.rejects(
+      untyped.cancel("sub_any", "idempotency-key", "constructor", PROVIDER),
+      InvalidSubscriptionRequestError,
+    );
   });
 });
