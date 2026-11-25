@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.2.4
+
+[compare changes](https://github.com/AntelopeJS/stripe/compare/v1.2.3...v1.2.4)
+
+### 🩹 Fixes
+
+- **subscriptions:** Refuse an inherited Object member as a cancellation timing ([#79](https://github.com/AntelopeJS/stripe/pull/79))
+
+### 📦 Build
+
+- **ci:** Move to tooling-configs 0.8.9 and the trunk CI ([#74](https://github.com/AntelopeJS/stripe/pull/74))
+
+### 🏡 Chore
+
+- Adopt tooling-configs 0.10 ([#78](https://github.com/AntelopeJS/stripe/pull/78))
+- **deps:** Update dependency @antelopejs/redis to v1.1.3 ([#81](https://github.com/AntelopeJS/stripe/pull/81))
+
+### 🤖 CI
+
+- Re-sync the AntelopeJS pack for the release app ([#76](https://github.com/AntelopeJS/stripe/pull/76))
+- Stop forwarding the retired RELEASE_GITHUB_TOKEN ([#77](https://github.com/AntelopeJS/stripe/pull/77))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli
+
 ## v1.2.3
 
 [compare changes](https://github.com/AntelopeJS/stripe/compare/v1.2.2...v1.2.3)
