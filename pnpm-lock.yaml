@@ -28,8 +28,8 @@ importers:
         version: 11.1.1
     devDependencies:
       '@antelopejs/core':
-        specifier: ~1.23.3
-        version: 1.23.3
+        specifier: ~1.24.0
+        version: 1.24.8
       '@antelopejs/redis':
         specifier: ~1.1.1
         version: 1.1.3(@types/ioredis-mock@8.2.8(ioredis@5.11.1))
@@ -85,10 +85,9 @@ importers:
 
 packages:
 
-  '@antelopejs/core@1.23.3':
-    resolution: {integrity: sha512-W9ekdNXaZCuK4lsKn5bBF3F+LoQhvwlmLoprw4m0W6jdS0DA6Bb7B2+2ttgla0oggAJwyFUxHcpBVloFnlv91w==}
+  '@antelopejs/core@1.24.8':
+    resolution: {integrity: sha512-zEGT+Xlirpl3yFOgPFd6zCP30WNp83kQrRnZuwQRAvaUjvKtbQjL3YHoNolMOJxAwIzaeKuT6d5KXXyR8shNcA==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    deprecated: 'Update to @antelopejs/core >=1.24.6: interface-core 0.5.2 adds HoldReloads, which older cores do not implement'
     hasBin: true
 
   '@antelopejs/interface-api@0.3.3':
@@ -98,6 +97,9 @@ packages:
 
   '@antelopejs/interface-core@0.5.1':
     resolution: {integrity: sha512-ON/7TYA1yyT8UznzKi6vnwyjRU3byNE0OcFXBmf8dE/dqp8hKjeWHVyA2EUPOngmEimCLw4idZqOS5DJqMJx3g==}
+
+  '@antelopejs/interface-core@0.5.4':
+    resolution: {integrity: sha512-5IzF8eGvXugI5KNHj2q+ux3J5AE09Sagul4Sl1k2FFRlfm7WSRE1uzmjL8CT2cqJvWExqW6SGX17InOddI/t/g==}
 
   '@antelopejs/interface-payment@0.2.1':
     resolution: {integrity: sha512-a9QoMXleHHoMLRI4uENOMM8eD7Uaxl6txVMxOhznvOuuYahjjPCfql694Bqda14dpoIokD3/pZZ3O2KRXa0aJA==}
@@ -2037,10 +2039,6 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lru-cache@11.2.7:
-    resolution: {integrity: sha512-aY/R+aEsRelme17KGQa/1ZSIpLpNYYrhcrepKTZgE+W3WM16YMCaPwOHLHsmopZHELU0Ojin1lPVxKR0MihncA==}
-    engines: {node: 20 || >=22}
-
   lru-cache@11.5.3:
     resolution: {integrity: sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==}
     engines: {node: 20 || >=22}
@@ -2840,9 +2838,9 @@ packages:
 
 snapshots:
 
-  '@antelopejs/core@1.23.3':
+  '@antelopejs/core@1.24.8':
     dependencies:
-      '@antelopejs/interface-core': 0.5.1
+      '@antelopejs/interface-core': 0.5.4
       '@clack/prompts': 1.8.1
       '@types/proper-lockfile': 4.1.4
       commander: 13.1.0
@@ -2850,10 +2848,12 @@ snapshots:
       jiti: 2.7.0
       mocha: 12.0.3
       picocolors: 1.1.1
+      picomatch: 4.0.7
       proper-lockfile: 4.1.2
       reflect-metadata: 0.2.2
-      semver: 7.8.5
+      semver: 7.8.6
       typescript: 5.9.3
+      yaml: 2.9.1
 
   '@antelopejs/interface-api@0.3.3(@antelopejs/interface-core@0.5.1)':
     dependencies:
@@ -2861,6 +2861,10 @@ snapshots:
     optional: true
 
   '@antelopejs/interface-core@0.5.1':
+    dependencies:
+      reflect-metadata: 0.2.2
+
+  '@antelopejs/interface-core@0.5.4':
     dependencies:
       reflect-metadata: 0.2.2
 
@@ -4275,7 +4279,7 @@ snapshots:
 
   glob@13.0.6:
     dependencies:
-      minimatch: 10.2.4
+      minimatch: 10.2.6
       minipass: 7.1.3
       path-scurry: 2.0.2
 
@@ -4607,8 +4611,6 @@ snapshots:
       yoctocolors: 2.1.2
 
   lru-cache@10.4.3: {}
-
-  lru-cache@11.2.7: {}
 
   lru-cache@11.5.3: {}
 
@@ -4961,7 +4963,7 @@ snapshots:
 
   path-scurry@2.0.2:
     dependencies:
-      lru-cache: 11.2.7
+      lru-cache: 11.5.3
       minipass: 7.1.3
 
   path-scurry@3.0.0:
