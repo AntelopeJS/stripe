@@ -43,7 +43,7 @@ function isEventIn<T extends object>(
   table: T,
   event: Stripe.Event,
 ): event is Extract<Stripe.Event, { type: keyof T }> {
-  return event.type in table;
+  return Object.prototype.hasOwnProperty.call(table, event.type);
 }
 
 function readSignature(headers: WebhookRequest["headers"]): string {

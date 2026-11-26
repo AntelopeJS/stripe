@@ -102,5 +102,7 @@ export function ToSubscription(
 export function IsOwnSubscription(
   metadata: Stripe.Metadata | null | undefined,
 ): boolean {
-  return Boolean(metadata && REFERENCE_KEY in metadata);
+  return Boolean(
+    metadata && Object.prototype.hasOwnProperty.call(metadata, REFERENCE_KEY),
+  );
 }
