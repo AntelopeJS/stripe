@@ -58,7 +58,7 @@
     "uuid": "11.1.1"
   },
   "devDependencies": {
-    "@antelopejs/core": "~1.23.3",
+    "@antelopejs/core": "~1.24.0",
     "@antelopejs/redis": "~1.1.1",
     "@antelopejs/tooling-configs": "^0.10.7",
     "@types/mocha": "^10.0.10",
@@ -67,8 +67,8 @@
     "eslint-plugin-perfectionist": "^5.11.0",
     "knip": "^6.34.0",
     "lefthook": "^2.2.2",
-    "oxfmt": "^0.66.0",
-    "oxlint": "1.81.0",
+    "oxfmt": "^0.80.0",
+    "oxlint": "1.95.0",
     "oxlint-tsgolint": "^7.0.2001",
     "release-it": "^19.2.4",
     "release-it-changelogen": "^0.1.0",
