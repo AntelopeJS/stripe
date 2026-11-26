@@ -3,14 +3,16 @@ import { mock } from "node:test";
 import assert from "node:assert/strict";
 import {
   InvalidSubscriptionRequestError,
-  SubscriptionError,
   type Subscription,
-  SubscriptionPaymentError,
   type SubscriptionRequest,
 } from "@antelopejs/interface-subscriptions";
 
 import type { WireObject } from "./wire";
 import { SignedWebhook } from "./signed-webhook";
+import {
+  IsSubscriptionError,
+  IsSubscriptionPaymentError,
+} from "../error-guards";
 import { Lookup } from "../implementations/fields";
 import { VerifyWebhook } from "../implementations/payment/webhooks";
 import { RegisterAccount } from "../implementations/payment/accounts";
@@ -278,7 +280,7 @@ describe("[stripe] provider boundary regressions without credentials", () => {
     await assert.rejects(
       CreateSubscription(REQUEST, "declined", PROVIDER),
       (error) => {
-        assert.ok(error instanceof SubscriptionError);
+        assert.ok(IsSubscriptionError(error));
         assert.equal(error.message, "unavailable");
         return true;
       },
@@ -287,7 +289,7 @@ describe("[stripe] provider boundary regressions without credentials", () => {
     await assert.rejects(
       CreateSubscription(REQUEST, "declined", PROVIDER),
       (error) => {
-        assert.ok(error instanceof SubscriptionPaymentError);
+        assert.ok(IsSubscriptionPaymentError(error));
         assert.equal(error.providerCode, "insufficient_funds");
         assert.equal(error.payment.id, "pi_test");
         return true;
@@ -297,7 +299,7 @@ describe("[stripe] provider boundary regressions without credentials", () => {
     await assert.rejects(
       CreateSubscription(REQUEST, "generic", PROVIDER),
       (error) => {
-        assert.ok(error instanceof SubscriptionPaymentError);
+        assert.ok(IsSubscriptionPaymentError(error));
         assert.equal(error.providerCode, "card_declined");
         return true;
       },

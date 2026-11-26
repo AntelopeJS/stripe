@@ -13,10 +13,10 @@ import {
   type SubscriptionEvent,
   type SubscriptionRequest,
   SubscriptionEvents,
-  SubscriptionPaymentError,
   UpdateSubscriptionPaymentMethod,
 } from "@antelopejs/interface-subscriptions";
 
+import { IsSubscriptionPaymentError } from "../error-guards";
 import { IsStripeId } from "../implementations/fields";
 
 const SUITE_TIMEOUT = 600_000;
@@ -229,7 +229,7 @@ describe("[stripe] a declined first period", function () {
     };
 
     const first = await refuse();
-    assert.ok(first instanceof SubscriptionPaymentError, String(first));
+    assert.ok(IsSubscriptionPaymentError(first), String(first));
     assert.ok(REFUSED_STATUSES.includes(first.payment.status));
     assert.equal(first.providerCode, "generic_decline");
     assert.equal(
@@ -239,7 +239,7 @@ describe("[stripe] a declined first period", function () {
     assert.deepEqual(await ListSubscriptions(payer.customer), []);
 
     const replay = await refuse();
-    assert.ok(replay instanceof SubscriptionPaymentError);
+    assert.ok(IsSubscriptionPaymentError(replay));
     assert.equal(replay.providerCode, "generic_decline");
     assert.equal(
       replay.payment.id,

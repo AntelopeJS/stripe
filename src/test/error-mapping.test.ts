@@ -5,11 +5,10 @@ import {
   CreatePayment,
   GetPayment,
   InvalidPaymentStateError,
-  PaymentError,
-  PaymentNotFoundError,
   RefundPayment,
 } from "@antelopejs/interface-payment";
 
+import { HasErrorName, IsPaymentError } from "../error-guards";
 import { TranslateError } from "../implementations/payment/errors";
 
 const EUR = "EUR";
@@ -44,11 +43,11 @@ describe("[stripe] translating provider errors", () => {
     for (const outage of outages) {
       const translated = TranslateError(outage, "pi_x", REFUND_CONTEXT);
       assert.ok(
-        translated instanceof PaymentError,
+        IsPaymentError(translated),
         `${outage.constructor.name} must stay in the interface vocabulary`,
       );
       assert.equal(
-        translated instanceof InvalidPaymentStateError,
+        HasErrorName(translated, "InvalidPaymentStateError"),
         false,
         `${outage.constructor.name} is retryable and must not read as a refusal`,
       );
@@ -61,8 +60,10 @@ describe("[stripe] translating provider errors", () => {
     });
 
     assert.ok(
-      TranslateError(rejected, "pi_x", REFUND_CONTEXT) instanceof
-        InvalidPaymentStateError,
+      HasErrorName(
+        TranslateError(rejected, "pi_x", REFUND_CONTEXT),
+        "InvalidPaymentStateError",
+      ),
     );
   });
 
@@ -73,8 +74,10 @@ describe("[stripe] translating provider errors", () => {
     });
 
     assert.ok(
-      TranslateError(missing, "pi_x", { entity: "payment" }) instanceof
-        PaymentNotFoundError,
+      HasErrorName(
+        TranslateError(missing, "pi_x", { entity: "payment" }),
+        "PaymentNotFoundError",
+      ),
     );
   });
 
@@ -139,8 +142,7 @@ describe("[stripe] rejections the contract names", function () {
           key(),
         ),
       (error) =>
-        error instanceof PaymentError &&
-        /requires a customer/.test(error.message),
+        IsPaymentError(error) && /requires a customer/.test(error.message),
     );
   });
 
@@ -158,16 +160,14 @@ describe("[stripe] rejections the contract names", function () {
           },
           key(),
         ),
-      (error) =>
-        error instanceof PaymentError && /offSession/.test(error.message),
+      (error) => IsPaymentError(error) && /offSession/.test(error.message),
     );
   });
 
   it("reports an unconfigured provider selector in the interface vocabulary", async () => {
     await assert.rejects(
       () => GetPayment("pi_irrelevant", "no-such-account"),
-      (error) =>
-        error instanceof PaymentError && /no-such-account/.test(error.message),
+      (error) => IsPaymentError(error) && /no-such-account/.test(error.message),
       "a misspelled account name must not escape as a bare Error",
     );
   });

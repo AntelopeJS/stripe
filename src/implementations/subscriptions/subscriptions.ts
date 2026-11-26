@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { PaymentError, type Payment } from "@antelopejs/interface-payment";
+import type { Payment } from "@antelopejs/interface-payment";
 import {
   type CancellationTiming,
   InvalidSubscriptionRequestError,
@@ -12,6 +12,7 @@ import {
   ValidateSubscriptionRequest,
 } from "@antelopejs/interface-subscriptions";
 
+import { IsPaymentError } from "../../error-guards";
 import { IsStripeId, Lookup } from "../fields";
 import { SubscriptionProduct } from "./product";
 import { GetAccount } from "../payment/accounts";
@@ -39,7 +40,7 @@ function clientFor(provider: string | undefined): Stripe {
   try {
     return GetAccount(provider).client;
   } catch (error) {
-    if (!(error instanceof PaymentError)) throw error;
+    if (!IsPaymentError(error)) throw error;
     throw new SubscriptionError(error.message);
   }
 }
